@@ -22,7 +22,7 @@ class Vct
     def feature(text)
         text.each do |i|
             id,name,type,*rest,table=i.split(",")
-            @layer[id.to_sym] = [name,type,table]
+            @layer[id.to_sym] = [id,name,type,table]
         end
 
         @file.puts 'FeatureCodeBegin'
@@ -68,8 +68,22 @@ class Vct
 
     def point(text)
         @file.puts 'PointBegin'
-        yield @file,text
-    @file.puts 'PointEnd'
+
+        pointLayer = @layer["1001".to_sym]
+
+        @rows.times do |row|  
+            @columns.times do |colu|
+                @id = @id + 1
+                point = Point.new(row,colu)
+                pointObj =  {:id=>@id,
+                            :layerid=>pointLayer[0],
+                            :layername=>pointLayer[1],
+                            :num=>1,
+                            :point=>point.to_s}
+                yield @file,text,pointObj
+            end
+        end
+        @file.puts 'PointEnd'
         @file.puts
     end
 
@@ -125,7 +139,7 @@ end
 
 filename = 'TEST.VCT'
 
-vct = Vct.new 1000,1000,filename
+vct = Vct.new 2,2,filename
 
 #########################################
 
@@ -232,17 +246,15 @@ end
 #########################################
 
 pointFormat = <<HERE
-%d
-%s
-%s
-%d
-%s
-end
+%<id>d
+%<layerid>s
+%<layername>s
+%<num>d
+%<point>s
 HERE
 
-vct.point pointFormat do |file,body|
-    file.puts body
-
+vct.point pointFormat do |file,body,point|
+    printf(file,body,point)
 end
 
 #########################################
