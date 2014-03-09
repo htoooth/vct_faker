@@ -152,15 +152,39 @@ class Vct
     end
 
     def polygon(text)
+
+        polygonLayer = @layer["3001".to_sym]
         @file.puts 'PolygonBegin'
-        yield @file,text
+
+#TODO: generate polygon
+        @polygonNum.times do |n|
+           polygon = {
+            :id => @id,
+            :layerid => polygonLayer[0],
+            :layername => polygonLayer[1],
+            :point => '2424,324244',
+            :num => 4,
+            :line => '12,32,435,'
+            } 
+            yield @file,text,polygon
+        end
+
         @file.puts 'PolygonEnd'
         @file.puts
     end
 
     def attribute(text)
         @file.puts 'AttributeBegin'
-        yield @file,text
+        @file.puts
+        #attribute generate and must geometry num
+        @layer.each do |key,value|
+            tableName = value[3]
+            @file.puts tableName
+            yield @file,text,value
+            @file.puts 'TableEnd'
+            @file.puts 
+
+        end
         @file.puts 'AttributeEnd'
     end
 
@@ -196,7 +220,7 @@ end
 
 filename = 'TEST.VCT'
 
-vct = Vct.new 2,2,filename
+vct = Vct.new 3,3,filename
 
 #########################################
 
@@ -302,7 +326,7 @@ end
 
 #########################################
 
-pointFormat = <<HERE
+pointFormat = <<-HERE
 %<id>d
 %<layerid>s
 %<layername>s
@@ -330,15 +354,24 @@ vct.line lineFormat do |file,body,line|
 end
 
 #########################################
-vct.polygon 'polygon' do |file,body|
-    file.puts body
+polygonFormat = <<HERE
+%<id>d
+%<layerid>s
+%<layername>s
+%<point>s
+%<num>d
+%<line>s
+HERE
+
+vct.polygon polygonFormat do |file,body,polygon|
+    printf(file,body,polygon)
 
 end
 
 #########################################
-vct.attribute 'attribute' do |file,body|
-    file.puts body
 
+vct.attribute 'attribute' do |file,body|
+    file.puts 'ok'
 end
 
 #########################################
