@@ -10,6 +10,10 @@ class Vct
 
         @id = 0
         @layer = {}
+
+        @pointNum = @rows * @columns
+        @lineNum = 2*@columns*@rows - (@columns + @rows)
+        @polygonNum = (@columns -1) * (@rows -1)
     end
 
     def head(text)
@@ -87,9 +91,62 @@ class Vct
         @file.puts
     end
 
+    def generateLinePoint(s,e,n)
+        points = []
+        width = (e.x - s.x).to_f/(n+1)
+        heigh = (e.y - s.y).to_f/(n+1)
+
+        points << s
+
+        n.times do |n|
+            point = Point.new(s.x + width*(n+1),s.y + heigh*(n+1))
+            points << point
+        end 
+
+        points << e
+
+        return points
+    end
+
     def line(text)
         @file.puts 'LineBegin'
-        yield @file,text
+        lineLayer = @layer["2001".to_sym]
+        n = @rows -1 
+
+        (1..@lineNum).each do |l|
+            pstart =nil
+            pend = nil
+            num = rand(1..10)
+            if l%(2*n-1) < n
+                i = (l-1)/(2*n -1)
+                j = (l-1)%(2*n -1)
+                puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
+                puts "linenum :#{l},endpoint:x=#{i},y=#{j+1}"
+                puts "===================="
+                pstart = Point.new(i,j)
+                pend = Point.new(i,j+1)
+            elsif l%(2*n -1) > (n-1)
+                i = (l-1)/(2*n -1)
+                j = (l-n)%(2*n -1)
+                puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
+                puts "linenum :#{l},endpoint:x=#{i+1},y=#{j}"
+                puts "===================="
+                pstart = Point.new(i,j)
+                pend = Point.new(i+1,j)
+            else
+                next
+            end
+            points = generateLinePoint(pstart,pend,num)
+
+            lineObj = {:id=>@id + l,
+                        :layerid=>lineLayer[0],
+                        :layername=>lineLayer[1],
+                        :type=>1,
+                        :num=>num+2,
+                        :point=>points.join("\n")}
+            yield @file,text,lineObj 
+        end 
+
         @file.puts 'LineEnd'
         @file.puts
     end
@@ -259,10 +316,17 @@ end
 
 #########################################
 
+lineFormat = <<HERE
+%<id>d
+%<layerid>s
+%<layername>s
+%<type>s
+%<num>d
+%<point>s
+HERE
 
-vct.line 'line' do |file,body|
-    file.puts body
-
+vct.line lineFormat do |file,body,line|
+   printf(file,body,line)
 end
 
 #########################################
