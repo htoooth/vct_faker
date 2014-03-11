@@ -139,8 +139,8 @@ class Vct
                 next
             end
             points = generateLinePoint(pstart,pend,num)
-
-            lineObj = {:id=>@id + l,
+            @id = @id + 1
+            lineObj = {:id=>@id,
                         :layerid=>lineLayer[0],
                         :layername=>lineLayer[1],
                         :type=>1,
@@ -160,18 +160,21 @@ class Vct
         @file.puts 'PolygonBegin'
 
         (1..@polygonNum).each do |k|
+
             l1 = k/n*(2*n-1) + k%n
             l2 = l1+n
             l3 = l1+2*n-1 
             l4 = l1+n-1 
 
-           polygon = {
-            :id => @id,
-            :layerid => polygonLayer[0],
-            :layername => polygonLayer[1],
-            :point => '2424,324244',
-            :num => 4,
-            :line => "#{l1},#{l2},-#{l3},-#{l4}"
+            @id = @id + 1
+
+            polygon = {
+                :id => @id,
+                :layerid => polygonLayer[0],
+                :layername => polygonLayer[1],
+                :point => '2424,324244',
+                :num => 4,
+                :line => "#{l1},#{l2},-#{l3},-#{l4}"
             } 
             yield @file,text,polygon
         end
@@ -197,6 +200,10 @@ class Vct
 
     def close
         @file.close
+    end
+
+    def generateAttribute(file,range,fieldType)
+
     end
 
 end
