@@ -1,5 +1,3 @@
-require "faker"
-
 class Vct
     def initialize(rows,columns,fileName) 
         @rows = rows
@@ -122,17 +120,17 @@ class Vct
             if (l-1)%(2*n-1) < (n -1)
                 i = (l-1)/(2*n -1)
                 j = (l-1)%(2*n -1)
-                puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
-                puts "linenum :#{l},endpoint:x=#{i},y=#{j+1}"
-                puts "===================="
+                # puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
+                # puts "linenum :#{l},endpoint:x=#{i},y=#{j+1}"
+                # puts "===================="
                 pstart = Point.new(i,j)
                 pend = Point.new(i,j+1)
             elsif (l-1)%(2*n -1) >= (n-1)
                 i = (l-1)/(2*n -1)
                 j = (l-n)%(2*n -1)
-                puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
-                puts "linenum :#{l},endpoint:x=#{i+1},y=#{j}"
-                puts "===================="
+                # puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
+                # puts "linenum :#{l},endpoint:x=#{i+1},y=#{j}"
+                # puts "===================="
                 pstart = Point.new(i,j)
                 pend = Point.new(i+1,j)
             else
@@ -229,7 +227,7 @@ class Vct
                 if name == 'BSM' or name == 'YSDM'
                    next 
                 end
-                
+
                 val = nil
 
                 case type
@@ -274,9 +272,10 @@ end
 
 #########################################
 
-filename = 'TEST.VCT'
+r = ARGV[0] || 2
+filename = ARGV[1] || 'TEST.VCT'
 
-vct = Vct.new 2,2,filename
+vct = Vct.new r,r,filename
 
 #########################################
 
