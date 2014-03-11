@@ -184,17 +184,28 @@ class Vct
     end
 
     def attribute(text)
+
         @file.puts 'AttributeBegin'
         @file.puts
         #attribute generate and must geometry num
-        @layer.each do |key,value|
-            tableName = value[3]
-            @file.puts tableName
-            yield @file,text,value
-            @file.puts 'TableEnd'
-            @file.puts 
 
-        end
+        pointLayer = @layer["1001".to_sym]
+        @file.puts pointLayer[3]
+        generateAttribute(@file,(1..@pointNum),pointLayer)
+        @file.puts 'TableEnd'
+        @file.puts 
+
+        lineLayer = @layer["2001".to_sym]
+        @file.puts lineLayer[3]
+        generateAttribute(@file,((@pointNum+1)..(@lineNum+@pointNum)),lineLayer)
+        @file.puts 'TableEnd'
+        @file.puts 
+
+        polygonLayer = @layer["3001".to_sym]
+        @file.puts polygonLayer[3]
+        generateAttribute(@file,((@pointNum + @lineNum +1)..(@pointNum+@lineNum+@polygonNum)),polygonLayer)
+        @file.puts 'TableEnd'
+        @file.puts 
         @file.puts 'AttributeEnd'
     end
 
@@ -202,10 +213,41 @@ class Vct
         @file.close
     end
 
-    def generateAttribute(file,range,fieldType)
+    def generateAttribute(file,range,layerdefn)
+        layerid = layerdefn[0]
+        fieldType = layerdefn[4]
+        range.each do |n|
+            value = []
+            bsm = n
+            value << [n,layerid]
+            fieldType.each do |t|
+                name = t.name
+                type = t.type
+                width = t.width
+                precision = t.precision
 
+                if name == 'BSM' or name == 'YSDM'
+                   next 
+                end
+                
+                val = nil
+
+                case type
+                when 'Integer'
+                    val = rand(10000)
+                when 'Char'
+                    val = (0...width.to_i).map { ('a'..'z').to_a[rand(26)] }.join
+                when 'Float'
+                    val = rand Math::E..Math::PI 
+                when 'Varbin'
+                    val = (0...20).map { ('a'..'z').to_a[rand(26)] }.join
+                end
+
+                value << val
+            end
+            file.puts value.join(',')
+        end
     end
-
 end
 
 class FieldType
@@ -213,7 +255,7 @@ class FieldType
     def initialize(name,type,width,precision)
         @name = name
         @type = type
-        @with = width
+        @width = width
         @precision = precision
     end
 end
@@ -384,9 +426,7 @@ end
 
 #########################################
 
-vct.attribute 'attribute' do |file,body|
-    file.puts 'ok'
-end
+vct.attribute 'attribute' 
 
 #########################################
 
