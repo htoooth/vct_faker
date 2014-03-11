@@ -117,7 +117,7 @@ class Vct
             pstart =nil
             pend = nil
             num = rand(1..10)
-            if l%(2*n-1) < n
+            if (l-1)%(2*n-1) < (n -1)
                 i = (l-1)/(2*n -1)
                 j = (l-1)%(2*n -1)
                 puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
@@ -125,7 +125,7 @@ class Vct
                 puts "===================="
                 pstart = Point.new(i,j)
                 pend = Point.new(i,j+1)
-            elsif l%(2*n -1) > (n-1)
+            elsif (l-1)%(2*n -1) >= (n-1)
                 i = (l-1)/(2*n -1)
                 j = (l-n)%(2*n -1)
                 puts "linenum :#{l},startpoint:x=#{i},y=#{j}"
@@ -152,19 +152,24 @@ class Vct
     end
 
     def polygon(text)
+        n = @rows -1 
 
         polygonLayer = @layer["3001".to_sym]
         @file.puts 'PolygonBegin'
 
-#TODO: generate polygon
-        @polygonNum.times do |n|
+        (1..@polygonNum).each do |k|
+            l1 = k/n*(2*n-1) + k%n
+            l2 = l1+n
+            l3 = l1+2*n-1 
+            l4 = l1+n-1 
+
            polygon = {
             :id => @id,
             :layerid => polygonLayer[0],
             :layername => polygonLayer[1],
             :point => '2424,324244',
             :num => 4,
-            :line => '12,32,435,'
+            :line => "#{l1},#{l2},-#{l3},-#{l4}"
             } 
             yield @file,text,polygon
         end
@@ -220,7 +225,7 @@ end
 
 filename = 'TEST.VCT'
 
-vct = Vct.new 3,3,filename
+vct = Vct.new 2,2,filename
 
 #########################################
 
