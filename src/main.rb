@@ -1,3 +1,5 @@
+require "faker"
+
 class Vct
     def initialize(rows,columns,fileName) 
         @rows = rows
