@@ -111,7 +111,7 @@ class Vct
     def line(text)
         @file.puts 'LineBegin'
         lineLayer = @layer["2001".to_sym]
-        n = @rows -1 
+        n = @rows
 
         (1..@lineNum).each do |l|
             pstart =nil
@@ -152,14 +152,14 @@ class Vct
     end
 
     def polygon(text)
-        n = @rows -1 
+        n = @rows
 
         polygonLayer = @layer["3001".to_sym]
         @file.puts 'PolygonBegin'
 
         (1..@polygonNum).each do |k|
 
-            l1 = k/n*(2*n-1) + k%n
+            l1 = (k-1)/(n-1)*(2*n-1) + (k-1)%(n-1) +1
             l2 = l1+n
             l3 = l1+2*n-1 
             l4 = l1+n-1 
