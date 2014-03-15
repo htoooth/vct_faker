@@ -1,0 +1,1 @@
+f = open('input.vct','w')
