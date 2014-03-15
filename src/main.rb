@@ -275,7 +275,7 @@ end
 r = ARGV[0] || 2
 filename = ARGV[1] || 'TEST.VCT'
 
-vct = Vct.new r,r,filename
+vct = Vct.new r.to_i,r.to_i,filename
 
 #########################################
 
