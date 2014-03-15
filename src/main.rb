@@ -172,7 +172,7 @@ class Vct
                 :layername => polygonLayer[1],
                 :point => '2424,324244',
                 :num => 4,
-                :line => "#{l1},#{l2},-#{l3},-#{l4}"
+                :line => "#{l1+@pointNum},#{l2+@pointNum},-#{l3+@pointNum},-#{l4+@pointNum}"
             } 
             yield @file,text,polygon
         end

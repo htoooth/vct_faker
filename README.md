@@ -22,7 +22,7 @@ main.coffee
 
 You must insall `node.js` and `coffeescript` package is installed by `npm`.
 
-livescript
+main.ls
 ==========
 
 You must insall `node.js` and `livescript` package is installed by `npm`.
