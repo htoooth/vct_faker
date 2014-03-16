@@ -1,4 +1,4 @@
-class Vct
+class VctFile
     def initialize(rows,columns,fileName) 
         @rows = rows
         @columns = columns
@@ -7,8 +7,6 @@ class Vct
             File.delete fileName
         end
         @file = File.new(fileName,"w")
-        @geobody = File.new("body", "w")
-        @headbody = File.new("head","w")
 
         @id = 0
         @layer = {}
@@ -26,10 +24,10 @@ class Vct
     end
 
     def head(text)
-        @geobody.puts 'HeadBegin'
-        yield @geobody,text
-        @geobody.puts 'HeadEnd'
-        @geobody.puts
+        @file.puts 'HeadBegin'
+        yield @file,text
+        @file.puts 'HeadEnd'
+        @file.puts
     end
 
     def feature(text)
@@ -38,10 +36,10 @@ class Vct
             @layer[id.to_sym] = [id,name,type,table]
         end
 
-        @geobody.puts 'FeatureCodeBegin'
-        yield @geobody,text
-        @geobody.puts 'FeatureCodeEnd'
-        @geobody.puts
+        @file.puts 'FeatureCodeBegin'
+        yield @file,text
+        @file.puts 'FeatureCodeEnd'
+        @file.puts
     end
 
     def table(text)
@@ -72,14 +70,14 @@ class Vct
 
         end
 
-        @geobody.puts 'TableStructureBegin'
-        yield @geobody,text,@layer
-        @geobody.puts 'TableStructureEnd'
-        @geobody.puts
+        @file.puts 'TableStructureBegin'
+        yield @file,text,@layer
+        @file.puts 'TableStructureEnd'
+        @file.puts
     end
 
     def point(text)
-        @geobody.puts 'PointBegin'
+        @file.puts 'PointBegin'
 
         pointLayer = @layer["1001".to_sym]
 
@@ -92,11 +90,11 @@ class Vct
                             :layername=>pointLayer[1],
                             :num=>1,
                             :point=>point.to_s}
-                yield @geobody,text,pointObj
+                yield @file,text,pointObj
             end
         end
-        @geobody.puts 'PointEnd'
-        @geobody.puts
+        @file.puts 'PointEnd'
+        @file.puts
     end
 
     def generateLinePoint(s,e,n)
@@ -117,7 +115,7 @@ class Vct
     end
 
     def line(text)
-        @geobody.puts 'LineBegin'
+        @file.puts 'LineBegin'
         lineLayer = @layer["2001".to_sym]
         n = @rows
 
@@ -138,10 +136,7 @@ class Vct
             else
                 next
             end
-            p pstart
-            p '======'
-            p pend
-            p '=============='
+
             points = generateLinePoint(pstart,pend,num)
             @id = @id + 1
             lineObj = {:id=>@id,
@@ -150,18 +145,18 @@ class Vct
                         :type=>1,
                         :num=>num+2,
                         :point=>points.join("\n")}
-            yield @geobody,text,lineObj 
+            yield @file,text,lineObj 
         end 
 
-        @geobody.puts 'LineEnd'
-        @geobody.puts
+        @file.puts 'LineEnd'
+        @file.puts
     end
 
     def polygon(text)
         n = @rows
 
         polygonLayer = @layer["3001".to_sym]
-        @geobody.puts 'PolygonBegin'
+        @file.puts 'PolygonBegin'
 
         (1..@polygonNum).each do |k|
 
@@ -180,41 +175,41 @@ class Vct
                 :num => 4,
                 :line => "#{l1+@pointNum},#{l2+@pointNum},-#{l3+@pointNum},-#{l4+@pointNum}"
             } 
-            yield @geobody,text,polygon
+            yield @file,text,polygon
         end
 
-        @geobody.puts 'PolygonEnd'
-        @geobody.puts
+        @file.puts 'PolygonEnd'
+        @file.puts
     end
 
     def attribute(text)
 
-        @geobody.puts 'AttributeBegin'
-        @geobody.puts
+        @file.puts 'AttributeBegin'
+        @file.puts
         #attribute generate and must geometry num
 
         pointLayer = @layer["1001".to_sym]
-        @geobody.puts pointLayer[3]
-        generateAttribute(@geobody,(1..@pointNum),pointLayer)
-        @geobody.puts 'TableEnd'
-        @geobody.puts 
+        @file.puts pointLayer[3]
+        generateAttribute(@file,(1..@pointNum),pointLayer)
+        @file.puts 'TableEnd'
+        @file.puts 
 
         lineLayer = @layer["2001".to_sym]
-        @geobody.puts lineLayer[3]
-        generateAttribute(@geobody,((@pointNum+1)..(@lineNum+@pointNum)),lineLayer)
-        @geobody.puts 'TableEnd'
-        @geobody.puts 
+        @file.puts lineLayer[3]
+        generateAttribute(@file,((@pointNum+1)..(@lineNum+@pointNum)),lineLayer)
+        @file.puts 'TableEnd'
+        @file.puts 
 
         polygonLayer = @layer["3001".to_sym]
-        @geobody.puts polygonLayer[3]
-        generateAttribute(@geobody,((@pointNum + @lineNum +1)..(@pointNum+@lineNum+@polygonNum)),polygonLayer)
-        @geobody.puts 'TableEnd'
-        @geobody.puts 
-        @geobody.puts 'AttributeEnd'
+        @file.puts polygonLayer[3]
+        generateAttribute(@file,((@pointNum + @lineNum +1)..(@pointNum+@lineNum+@polygonNum)),polygonLayer)
+        @file.puts 'TableEnd'
+        @file.puts 
+        @file.puts 'AttributeEnd'
     end
 
     def close
-        @geobody.close
+        @file.close
     end
 
     def generateAttribute(file,range,layerdefn)
@@ -280,31 +275,17 @@ class Point
     end
 end
 
-class Layer
-    attr_accessor :id,:name,:type,:table,:field,:fidlist
-    def initialize(id,name,type,table,field)
-        @id = id
-        @name = name
-        @type = type
-        @table = table
-        @field = field
-        @fidlist = []
-    end
-
-    def to_s
-        "#{@id},#{@name},#{@type},0,0,0,#{@table}"
-    end
 #########################################
 
 r = ARGV[0] || 2
 filename = ARGV[1] || 'TEST.VCT'
 
-vct = Vct.new r.to_i,r.to_i,filename
+vctfile = VctFile.new r.to_i,r.to_i,filename
 
 #########################################
 
 headstring =<<-HERE
-Datamark: LANDUSE.VCT
+Datamark: LANDUSE.VCTFILE
 Version: 2.0
 Unit: M
 Dim: 2
@@ -323,7 +304,7 @@ Date: 20100611
 Separator: ,
 HERE
 
-vct.head headstring do |file,body|
+vctfile.head headstring do |file,body|
     file.puts body
 end
 
@@ -335,7 +316,7 @@ layer = [
     '3001,xzq,Polygon,0,0,0,xzqT'
 ]
 
-vct.feature layer do |file,body|
+vctfile.feature layer do |file,body|
     body.each {|i| file.puts i }
 end
 
@@ -399,7 +380,7 @@ HERE
 
 table = [lxdwT,xzqjxT,xzqT]
 
-vct.table table do |file,body|
+vctfile.table table do |file,body|
     table.each {|i| file.puts i}
 end
 
@@ -413,7 +394,7 @@ pointFormat = <<-HERE
 %<point>s
 HERE
 
-vct.point pointFormat do |file,body,point|
+vctfile.point pointFormat do |file,body,point|
     printf(file,body,point)
 end
 
@@ -428,7 +409,7 @@ lineFormat = <<HERE
 %<point>s
 HERE
 
-vct.line lineFormat do |file,body,line|
+vctfile.line lineFormat do |file,body,line|
    printf(file,body,line)
 end
 
@@ -442,19 +423,14 @@ polygonFormat = <<HERE
 %<line>s
 HERE
 
-vct.polygon polygonFormat do |file,body,polygon|
+vctfile.polygon polygonFormat do |file,body,polygon|
     printf(file,body,polygon)
 
 end
 
 #########################################
 
-vct.attribute 'attribute' 
+vctfile.attribute 'attribute' 
 
 #########################################
-
-
-vct.close
-
-
-
+vctfile.close
