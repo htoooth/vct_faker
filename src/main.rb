@@ -124,6 +124,7 @@ class Vct
                 pend = Point.new(i,j+1)
             elsif (l-1)%(2*n -1) >= (n-1)
                 i = (l-1)/(2*n -1)
+                j = (l-n)%(2*n -1)
                 pstart = Point.new(i,j)
                 pend = Point.new(i+1,j)
             else
