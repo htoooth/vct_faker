@@ -93,8 +93,8 @@ class Vct
 
     def generateLinePoint(s,e,n)
         points = []
-        width = (e.x - s.x).to_f/(n+1)
-        heigh = (e.y - s.y).to_f/(n+1)
+        width = (e.x-s.x).to_f/(n+1)
+        heigh = (e.y-s.y).to_f/(n+1)
 
         points << s
 
@@ -129,6 +129,10 @@ class Vct
             else
                 next
             end
+            p pstart
+            p '======'
+            p pend
+            p '=============='
             points = generateLinePoint(pstart,pend,num)
             @id = @id + 1
             lineObj = {:id=>@id,
