@@ -14,6 +14,10 @@ class Vct
         @pointNum = @rows * @columns
         @lineNum = 2*@columns*@rows - (@columns + @rows)
         @polygonNum = (@columns -1) * (@rows -1)
+
+        @point_range_id = (1..@pointNum)
+        @line_range_id = ((@pointNum +1)..(@pointNum + @lineNum))
+        @polygon_ragne_id = ((@pointNum+ @lineNum +1)..(@pointNum + @lineNum + @polygonNum))
     end
 
     def head(text)
@@ -30,7 +34,6 @@ class Vct
         end
 
         @file.puts 'FeatureCodeBegin'
-
         yield @file,text
         @file.puts 'FeatureCodeEnd'
         @file.puts
@@ -254,6 +257,10 @@ class FieldType
         @width = width
         @precision = precision
     end
+
+    def to_s
+        "#{@name},#{@type},#{@width},#{@precision}"
+    end
 end
 
 class Point
@@ -268,6 +275,20 @@ class Point
     end
 end
 
+class Layer
+    attr_accessor :id,:name,:type,:table,:field,:fidlist
+    def initialize(id,name,type,table,field)
+        @id = id
+        @name = name
+        @type = type
+        @table = table
+        @field = field
+        @fidlist = []
+    end
+
+    def to_s
+        "#{@id},#{@name},#{@type},0,0,0,#{@table}"
+    end
 #########################################
 
 r = ARGV[0] || 2
