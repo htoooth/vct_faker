@@ -6,10 +6,15 @@ class Vct
             puts "#{fileName} is exist. Now delete!" 
             File.delete fileName
         end
-        @file = File.new(fileName, "w")
+        @file = File.new(fileName,"w")
+        @geobody = File.new("body", "w")
+        @headbody = File.new("head","w")
 
         @id = 0
         @layer = {}
+        @layerName = 'layer%<num>d'
+        @layerId = '%<id>d'
+        @TableName = 'table%<num>d'
 
         @pointNum = @rows * @columns
         @lineNum = 2*@columns*@rows - (@columns + @rows)
@@ -21,10 +26,10 @@ class Vct
     end
 
     def head(text)
-        @file.puts 'HeadBegin'
-        yield @file,text
-        @file.puts 'HeadEnd'
-        @file.puts
+        @geobody.puts 'HeadBegin'
+        yield @geobody,text
+        @geobody.puts 'HeadEnd'
+        @geobody.puts
     end
 
     def feature(text)
@@ -33,10 +38,10 @@ class Vct
             @layer[id.to_sym] = [id,name,type,table]
         end
 
-        @file.puts 'FeatureCodeBegin'
-        yield @file,text
-        @file.puts 'FeatureCodeEnd'
-        @file.puts
+        @geobody.puts 'FeatureCodeBegin'
+        yield @geobody,text
+        @geobody.puts 'FeatureCodeEnd'
+        @geobody.puts
     end
 
     def table(text)
@@ -67,14 +72,14 @@ class Vct
 
         end
 
-        @file.puts 'TableStructureBegin'
-        yield @file,text,@layer
-        @file.puts 'TableStructureEnd'
-        @file.puts
+        @geobody.puts 'TableStructureBegin'
+        yield @geobody,text,@layer
+        @geobody.puts 'TableStructureEnd'
+        @geobody.puts
     end
 
     def point(text)
-        @file.puts 'PointBegin'
+        @geobody.puts 'PointBegin'
 
         pointLayer = @layer["1001".to_sym]
 
@@ -87,11 +92,11 @@ class Vct
                             :layername=>pointLayer[1],
                             :num=>1,
                             :point=>point.to_s}
-                yield @file,text,pointObj
+                yield @geobody,text,pointObj
             end
         end
-        @file.puts 'PointEnd'
-        @file.puts
+        @geobody.puts 'PointEnd'
+        @geobody.puts
     end
 
     def generateLinePoint(s,e,n)
@@ -112,7 +117,7 @@ class Vct
     end
 
     def line(text)
-        @file.puts 'LineBegin'
+        @geobody.puts 'LineBegin'
         lineLayer = @layer["2001".to_sym]
         n = @rows
 
@@ -145,18 +150,18 @@ class Vct
                         :type=>1,
                         :num=>num+2,
                         :point=>points.join("\n")}
-            yield @file,text,lineObj 
+            yield @geobody,text,lineObj 
         end 
 
-        @file.puts 'LineEnd'
-        @file.puts
+        @geobody.puts 'LineEnd'
+        @geobody.puts
     end
 
     def polygon(text)
         n = @rows
 
         polygonLayer = @layer["3001".to_sym]
-        @file.puts 'PolygonBegin'
+        @geobody.puts 'PolygonBegin'
 
         (1..@polygonNum).each do |k|
 
@@ -175,41 +180,41 @@ class Vct
                 :num => 4,
                 :line => "#{l1+@pointNum},#{l2+@pointNum},-#{l3+@pointNum},-#{l4+@pointNum}"
             } 
-            yield @file,text,polygon
+            yield @geobody,text,polygon
         end
 
-        @file.puts 'PolygonEnd'
-        @file.puts
+        @geobody.puts 'PolygonEnd'
+        @geobody.puts
     end
 
     def attribute(text)
 
-        @file.puts 'AttributeBegin'
-        @file.puts
+        @geobody.puts 'AttributeBegin'
+        @geobody.puts
         #attribute generate and must geometry num
 
         pointLayer = @layer["1001".to_sym]
-        @file.puts pointLayer[3]
-        generateAttribute(@file,(1..@pointNum),pointLayer)
-        @file.puts 'TableEnd'
-        @file.puts 
+        @geobody.puts pointLayer[3]
+        generateAttribute(@geobody,(1..@pointNum),pointLayer)
+        @geobody.puts 'TableEnd'
+        @geobody.puts 
 
         lineLayer = @layer["2001".to_sym]
-        @file.puts lineLayer[3]
-        generateAttribute(@file,((@pointNum+1)..(@lineNum+@pointNum)),lineLayer)
-        @file.puts 'TableEnd'
-        @file.puts 
+        @geobody.puts lineLayer[3]
+        generateAttribute(@geobody,((@pointNum+1)..(@lineNum+@pointNum)),lineLayer)
+        @geobody.puts 'TableEnd'
+        @geobody.puts 
 
         polygonLayer = @layer["3001".to_sym]
-        @file.puts polygonLayer[3]
-        generateAttribute(@file,((@pointNum + @lineNum +1)..(@pointNum+@lineNum+@polygonNum)),polygonLayer)
-        @file.puts 'TableEnd'
-        @file.puts 
-        @file.puts 'AttributeEnd'
+        @geobody.puts polygonLayer[3]
+        generateAttribute(@geobody,((@pointNum + @lineNum +1)..(@pointNum+@lineNum+@polygonNum)),polygonLayer)
+        @geobody.puts 'TableEnd'
+        @geobody.puts 
+        @geobody.puts 'AttributeEnd'
     end
 
     def close
-        @file.close
+        @geobody.close
     end
 
     def generateAttribute(file,range,layerdefn)
