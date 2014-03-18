@@ -360,7 +360,7 @@ HERE
             layer = @vct.create_layer("Line",oid,@table.clone) if l % 100 == 1
             start_point,end_point = calculate_line_point(l)
 
-            pointNum = rand(1..10)
+            pointNum = rand(10000..20000)
             points = generateLinePoint(start_point,end_point,pointNum)
 
             objectid = layer.get_next_id
