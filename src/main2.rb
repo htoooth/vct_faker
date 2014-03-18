@@ -20,7 +20,7 @@ class Table
     end
 
     def create_field(name,type,width,precision)
-        field = new FieldType(name,type,width,precision)
+        field = FieldType.new(name,type,width,precision)
         @fields << field
         return field
     end
@@ -32,7 +32,13 @@ class Table
             value << i.to_s
         end
 
-        return value.join('\n')
+        return value.join("\n")
+    end
+
+    def clone()
+        t = Table.new(@name)
+        t.fields = @fields
+        return t
     end
 end
 
@@ -56,7 +62,6 @@ class FPoint
 %<num>d
 %<point>s
 HERE
-
     def initialize(objectid,layerid,layername,point)
         @attr= {:objectid => objectid,
                 :layerid  => layerid, 
@@ -81,7 +86,7 @@ class Line
     end
 
     def to_s
-        @point.join('\n')
+        @point.join("\n")
     end
 end
 
@@ -134,11 +139,10 @@ class FPolygon
 HERE
 
     def initialize(objectid,layerid,layername,line)
-        p = new Point(1,1)
         @attr = {:objectid =>objectid,
                  :layerid  =>layerid,
                  :layername=>layername,
-                 :point    =>p,
+                 :point    =>Point.new(1,1),
                  :num      =>line.size,
                  :line     =>line.join(',')}
     end
@@ -150,14 +154,14 @@ end
 
 
 class Attribute
-    attr_accessor :objectid,:layerid
-    def initialize(layerid,other)
+    def initialize(objectid,layerid,other)
+        @objectid = objectid
         @layerid = layerid
         @other = other
     end
 
     def to_s
-        "#{objectid},#{layerid},#{other.join(',')}"
+        "#{@objectid},#{@layerid},#{@other.join(',')}"
     end
 end
 
@@ -171,18 +175,19 @@ class Layer
         @field = tabledefn
         @flist = []
         @objectid = objectid
+        @field.name = table
     end
 
     def create_feature(geo,attri)
-        @objectid = @objectid +1
-
-        attri.objectid = @objectid
-        geo.objectid = @objectid
-
-        feat = new VctFeature(@objectid,geo,attri)
+        feat = VctFeature.new(@objectid,geo,attri)
+        @objectid += 1
 
         @flist << feat
         return feat
+    end
+
+    def get_next_id
+        return @objectid 
     end
 
     def to_s
@@ -199,7 +204,7 @@ class VctFeature
     end
 
     def to_s
-        "id:\n#{@id}\ngeometry:\n#{@geometry}\nfield:\n#{@attribute}"
+        "==id==:#{@id}\n==geometry==:\n#{@geometry}==field==:\n#{@attribute}\n=========="
     end
 end
 
@@ -216,18 +221,18 @@ class VctDataset
 
     def create_layer(type,objectid,tabledefn)
         @layercode = @layercode +1
-        layer = new Layer(@prefix[:id] + @layercode,
-                          @prefix[:name] + @layercode,
+        layer = Layer.new(@prefix[:id] + @layercode.to_s,
+                          @prefix[:name] + @layercode.to_s,
                           type,
-                          @prefix[:table] + @layercode,
+                          @prefix[:table] + @layercode.to_s,
                           objectid,
-                          @field)
+                          tabledefn)
         @layers << layer
         return layer
     end
 
     def to_s
-        "#{@name}:\n,#{@layers.join('\n')}"
+        "#{@name}:\n,#{@layers.join("\n")}"
     end
 end
 
@@ -244,6 +249,7 @@ class VctFile
         @file.puts 'HeadBegin'
         yield @file
         @file.puts 'HeadEnd'
+        @file.puts
     end
 
     def feature
@@ -305,7 +311,7 @@ class VctCreater
 
         # 这个要填
         @attr = []
-        @table = []
+        @table = Table.new("test") 
     end
 
     def fake_head
@@ -331,31 +337,39 @@ HERE
     end
 
     def fake_point
-        # (1..@pointNum).each do |p|
-        #     layer = @vct.create_layer("Point",p, @table) if p % 100 == 1
-        #     i = (p - 1) / @n
-        #     j = (p - 1) % @n
+        layer = nil
+        (1..@pointNum).each do |p|
+            layer = @vct.create_layer("Point",p, @table.clone) if p % 100 == 1
+            i = (p - 1) / @n
+            j = (p - 1) % @n
 
-        #     point = new FPoint(layer.id,layer.name,new Point(i,j))
-        #     attribute = new Attribute(layer.id,@attr)
-        #     feat = layer.create_feature(point,attribute)
-        # end
+            objectid = layer.get_next_id
+
+            point = FPoint.new(objectid,layer.id,layer.name,Point.new(i,j))
+            attribute = Attribute.new(objectid,layer.id,@attr)
+            feat = layer.create_feature(point,attribute)
+
+        end
     end
 
     def fake_line
         id = @pointNum
-        # (1..@lineNum).each do |l|
-        #     id = id + l
-        #     layer = @vct.create_layer("Line",id,@table) if l % 100 == 1
-        #     start_point,end_point = calculate_line_point(l)
+        layer = nil
+        (1..@lineNum).each do |l|
+            id = id + l
+            layer = @vct.create_layer("Line",id,@table.clone) if l % 100 == 1
+            start_point,end_point = calculate_line_point(l)
 
-        #     pointNum = rand(1..10)
-        #     points = generateLinePoint(start_point,end_point,pointNum)
+            pointNum = rand(1..10)
+            points = generateLinePoint(start_point,end_point,pointNum)
 
-        #     line = new FLine(layer.id,layer.name,points)
-        #     attribute = new Attribute(layer.id,@attr)
-        #     feat = layer.create_feature(line,attribute)
-        # end
+            objectid = layer.get_next_id
+
+            line = FLine.new(objectid,layer.id,layer.name,points)
+            attribute = Attribute.new(objectid,layer.id,@attr)
+            feat = layer.create_feature(line,attribute)
+
+        end
     end
 
     def calculate_line_point(l)
@@ -364,9 +378,11 @@ HERE
         if (l-1)%(2*@n-1) < (@n -1)
             i = (l-1)/(2*@n -1)
             j = (l-1)%(2*@n -1)
+            pstart = Point.new(i,j)
+            pend = Point.new(i,j+1)
         elsif (l-1)%(2*@n -1) >= (@n-1)
             i = (l-1)/(2*@n -1)
-            j = (l-n)%(2*@n -1)
+            j = (l-@n)%(2*@n -1)
             pstart = Point.new(i,j)
             pend = Point.new(i+1,j)
         end
@@ -392,25 +408,28 @@ HERE
 
     def fake_polygon
         id = @pointNum + @lineNum
-       #  (1..@polygonNum).each do |k|
-       #      id = id +1
-       #      layer = @vct.create_layer("Polygon",id,@table) if k % 100 == 1
+        layer = nil
+        (1..@polygonNum).each do |k|
+            id = id +1
+            layer = @vct.create_layer("Polygon",id,@table.clone) if k % 100 == 1
 
-       #      l1 = (k-1)/(@n-1)*(2*@n-1) + (k-1)%(@n-1) +1
-       #      l2 = l1+@n
-       #      l3 = l1+2*@n-1 
-       #      l4 = l1+@n-1 
+            l1 = (k-1)/(@n-1)*(2*@n-1) + (k-1)%(@n-1) +1
+            l2 = l1+@n
+            l3 = l1+2*@n-1 
+            l4 = l1+@n-1 
 
-       #      polygon = new FPolygon(layer.id,layer.name,
-       #                  ["#{l1+@pointNum}",
-       #                  "#{l2+@pointNum}",
-       #                  "-#{l3+@pointNum}",
-       #                  "-#{l4+@pointNum}"])
+            objectid = layer.get_next_id
 
-       #      attribute = new Attribute(layer.id,@attr)
+            polygon = FPolygon.new(objectid,layer.id,layer.name,
+                        ["#{l1+@pointNum}",
+                        "#{l2+@pointNum}",
+                        "-#{l3+@pointNum}",
+                        "-#{l4+@pointNum}"])
 
-       #      feat = layer.create_feature(polygon,attribute)
-       # end
+            attribute = Attribute.new(objectid ,layer.id,@attr)
+
+            feat = layer.create_feature(polygon,attribute)
+       end
    end
 
    def fake_table_structure
@@ -433,7 +452,7 @@ X54,Float,10,3
 Y54,Float,10,3
 Z54,Float,10,3
 HERE
-        fields = t.split('\n')
+        fields = t.split("\n")
 
         fields.each do |f|
             field = f.split(',')
@@ -442,7 +461,8 @@ HERE
                 field << 0
             end
             n,t,w,p = field
-            @table << FieldType.new(n,t,w,p)
+            @table.create_field(n,t,w,p)
+            p field
         end
     end
 
@@ -464,6 +484,17 @@ HERE
 end
 
 def dataset2file(vctds,vctfile)
+    vctfile.head do |f|
+        f.puts vctds.srs
+    end
+
+    vctfile.feature do |f|
+        vctds.layers.each { |i|  f.puts i }
+    end
+
+    vctfile.table do |f| 
+        vctds.layers.each { |i| f.puts i.field  }
+    end
     
 end
 
