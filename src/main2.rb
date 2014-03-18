@@ -499,6 +499,21 @@ HERE
     end
 
     def fake_fci
+        fake_fci_point()
+        fake_fci_line()
+        fake_fci_polygon()
+    end
+
+    def fake_fci_point
+        #TODO
+    end
+
+    def fake_fci_line
+        #TODO
+    end
+
+    def fake_fci_polygon
+        #TODO
     end
 end
 
