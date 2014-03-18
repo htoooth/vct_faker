@@ -211,7 +211,7 @@ class VctFeature
 end
 
 class VctDataset
-    attr_accessor :layers,:name,:srs,:field,:featurelist
+    attr_accessor :layers,:name,:srs,:featurelist,:point_featurelist,:line_featurelist,:polygon_featurelist
     def initialize(name)
         @name = name
         @layers = []
@@ -220,6 +220,9 @@ class VctDataset
                    :table=> 'table'}
         @layercode = 0
         @featurelist = {}
+        @point_featurelist = {}
+        @line_featurelist = {}
+        @polygon_featurelist = {}
     end
 
     def create_layer(type,objectid,tabledefn)
@@ -237,6 +240,16 @@ class VctDataset
 
     def to_s
         "#{@name}:\n,#{@layers.join("\n")}"
+    end
+
+    def clone
+       vctds = VctDataset.new(@name)
+       vctds.srs = @srs
+       vctds.featurelist = @featurelist
+       vctds.point_featurelist = @point_featurelist
+       vctds.line_featurelist = @line_featurelist
+       vctds.polygon_featurelist = @polygon_featurelist
+       return vctds
     end
 end
 
@@ -306,6 +319,7 @@ class VctFile
 end
 
 class VctCreater
+    attr_accessor :vct
     def initialize(vct_ds,size)
         @vct= vct_ds
         @pointNum = size ** 2
@@ -475,13 +489,16 @@ HERE
                 4.5,3.2,2.1]
     end
 
-    def fake
+    def fake_efc
         fake_head()
         fake_table_structure()
         fake_attribute()
         fake_point()
         fake_line()
         fake_polygon()
+    end
+
+    def fake_fci
     end
 end
 
@@ -538,11 +555,22 @@ def dataset2file(vctds,vctfile)
     
 end
 
-def fake_vct(name,size)
+def create_ds(name,size)
     vct_ds   = VctDataset.new(name)
-    vct_fake = VctCreater.new(vct_ds,size)
-    vct_fake.fake
-    return vct_ds
+    vct_fake = VctCreater.new(vct_ds,size) 
+    return vct_ds,vct_fake
+end
+
+def fake_vct_efc(vctds,vctfake)
+    vctfake.fake_efc
+    return vctds,vctfake
+end
+
+def fake_vct_fci(vctds,vctfake)
+    new_vct_ds = vctds.clone
+    vctfake.vct = new_vct_ds
+    vctfake.fake_fci
+    return new_vct_ds,vctfake
 end
 
 def create_file(name)
@@ -551,11 +579,19 @@ end
 
 def main(argv)
     size = argv[0] || 2
-    name = argv[1] || 'TEST.VCT'
-    vct_ds   = fake_vct(name,size.to_i)
-    vct_file = create_file(name)
-    dataset2file(vct_ds,vct_file)
-    vct_file.close
+    name = argv[1] || 'TEST'
+    vct_ds,vct_fake  = create_ds(name,size.to_i)
+
+    efc_ds,efc_fake = fake_vct_efc(vct_ds,vct_fake)
+    vct_file_efc = create_file("#{name}_efc.VCT")
+    dataset2file(vct_ds,vct_file_efc)
+    vct_file_efc.close
+
+    fci_ds,fci_fake = fake_vct_fci(efc_ds,efc_fake)
+    vct_file_fci = create_file("#{name}_fci.VCT")
+    dataset2file(fci_ds,vct_file_fci)
+    vct_file_fci.close
+
 end
 
 main(ARGV)
