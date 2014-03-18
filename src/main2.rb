@@ -167,7 +167,7 @@ end
 
 class Layer
     attr_accessor :id,:name,:type,:table,:field,:feats;
-    def initialize(id,name,type,table,objectid,tabledefn)
+    def initialize(id,name,type,table,objectid,tabledefn,ds_featurelist)
         @id = id
         @name = name
         @type = type
@@ -176,12 +176,14 @@ class Layer
         @objectid = objectid
         @field.name = table
         @feats = []
+        @ds_featurelist = ds_featurelist
     end
 
     def create_feature(geo,attri)
         feat = VctFeature.new(@objectid,geo,attri)
-        @objectid += 1
+        @ds_featurelist[@objectid] = feat
 
+        @objectid += 1
         @feats << feat
         return feat
     end
@@ -209,7 +211,7 @@ class VctFeature
 end
 
 class VctDataset
-    attr_accessor :layers,:name,:srs,:field
+    attr_accessor :layers,:name,:srs,:field,:featurelist
     def initialize(name)
         @name = name
         @layers = []
@@ -217,6 +219,7 @@ class VctDataset
                    :id   => '100',
                    :table=> 'table'}
         @layercode = 0
+        @featurelist = {}
     end
 
     def create_layer(type,objectid,tabledefn)
@@ -226,7 +229,8 @@ class VctDataset
                           type,
                           @prefix[:table] + @layercode.to_s,
                           objectid,
-                          tabledefn)
+                          tabledefn,
+                          @featurelist)
         @layers << layer
         return layer
     end
@@ -357,12 +361,11 @@ HERE
         layer = nil
         (1..@lineNum).each do |l|
             oid = id + l
-            layer = @vct.create_layer("Line",oid,@table.clone) if l % 100 == 1
+            pointNum = rand(100..100000)
             start_point,end_point = calculate_line_point(l)
-
-            pointNum = rand(10000..20000)
             points = generateLinePoint(start_point,end_point,pointNum)
 
+            layer = @vct.create_layer("Line",oid,@table.clone) if l % 100 == 1
             objectid = layer.get_next_id
 
             line = FLine.new(objectid,layer.id,layer.name,points)
@@ -411,13 +414,13 @@ HERE
         layer = nil
         (1..@polygonNum).each do |k|
             oid = id +k
-            layer = @vct.create_layer("Polygon",oid,@table.clone) if k % 100 == 1
 
             l1 = (k-1)/(@n-1)*(2*@n-1) + (k-1)%(@n-1) +1
             l2 = l1+@n
             l3 = l1+2*@n-1 
             l4 = l1+@n-1 
 
+            layer = @vct.create_layer("Polygon",oid,@table.clone) if k % 100 == 1
             objectid = layer.get_next_id
 
             polygon = FPolygon.new(objectid,layer.id,layer.name,
