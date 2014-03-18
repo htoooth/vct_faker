@@ -106,7 +106,7 @@ HERE
                  :layername=>layername,
                  :type     =>1,
                  :num      =>point.size,
-                 :point    =>point.join('\n')}
+                 :point    =>point.join("\n")}
     end
 
     def to_s
@@ -173,16 +173,16 @@ class Layer
         @type = type
         @table = table
         @field = tabledefn
-        @flist = []
         @objectid = objectid
         @field.name = table
+        @feats = []
     end
 
     def create_feature(geo,attri)
         feat = VctFeature.new(@objectid,geo,attri)
         @objectid += 1
 
-        @flist << feat
+        @feats << feat
         return feat
     end
 
@@ -356,8 +356,8 @@ HERE
         id = @pointNum
         layer = nil
         (1..@lineNum).each do |l|
-            id = id + l
-            layer = @vct.create_layer("Line",id,@table.clone) if l % 100 == 1
+            oid = id + l
+            layer = @vct.create_layer("Line",oid,@table.clone) if l % 100 == 1
             start_point,end_point = calculate_line_point(l)
 
             pointNum = rand(1..10)
@@ -410,8 +410,8 @@ HERE
         id = @pointNum + @lineNum
         layer = nil
         (1..@polygonNum).each do |k|
-            id = id +1
-            layer = @vct.create_layer("Polygon",id,@table.clone) if k % 100 == 1
+            oid = id +k
+            layer = @vct.create_layer("Polygon",oid,@table.clone) if k % 100 == 1
 
             l1 = (k-1)/(@n-1)*(2*@n-1) + (k-1)%(@n-1) +1
             l2 = l1+@n
@@ -495,9 +495,43 @@ def dataset2file(vctds,vctfile)
         vctds.layers.each { |i| f.puts i.field  }
     end
 
-    pointlayer = vctds.layers.select { |i|  i.type == "Point"}
-    linelayer = vctds.layers.select { |i| i.type == "Line"  }
-    polygonlayer = vctds.layers.select { |i| i.type == "Polygon" }
+    pointlayers = vctds.layers.select { |i|  i.type == "Point"}
+    vctfile.point do |f|
+        pointlayers.each do |l|
+            l.feats.each do |feat|
+                f.puts feat.geometry
+            end
+        end
+    end
+
+    linelayers = vctds.layers.select { |i| i.type == "Line"  }
+    vctfile.line do |f|
+        linelayers.each do |l|
+            l.feats.each do | feat|
+                f.puts feat.geometry
+            end
+        end
+    end
+
+    polygonlayers = vctds.layers.select { |i| i.type == "Polygon" }
+    vctfile.polygon do |f|
+        polygonlayers.each do |l|
+            l.feats.each do | feat|
+                f.puts feat.geometry
+            end
+        end
+    end
+
+    vctfile.attribute do |f|
+        vctds.layers.each do |layer|
+            f.puts layer.table
+            layer.feats.each do |feat|
+                f.puts feat.attribute
+            end
+            f.puts "TableEnd"
+            f.puts 
+        end
+    end
     
 end
 
@@ -515,7 +549,7 @@ end
 def main(argv)
     size = argv[0] || 2
     name = argv[1] || 'TEST.VCT'
-    vct_ds   = fake_vct(name,size)
+    vct_ds   = fake_vct(name,size.to_i)
     vct_file = create_file(name)
     dataset2file(vct_ds,vct_file)
     vct_file.close
