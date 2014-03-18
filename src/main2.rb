@@ -462,7 +462,6 @@ HERE
             end
             n,t,w,p = field
             @table.create_field(n,t,w,p)
-            p field
         end
     end
 
@@ -495,6 +494,10 @@ def dataset2file(vctds,vctfile)
     vctfile.table do |f| 
         vctds.layers.each { |i| f.puts i.field  }
     end
+
+    pointlayer = vctds.layers.select { |i|  i.type == "Point"}
+    linelayer = vctds.layers.select { |i| i.type == "Line"  }
+    polygonlayer = vctds.layers.select { |i| i.type == "Polygon" }
     
 end
 
