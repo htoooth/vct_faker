@@ -49,6 +49,10 @@ class Point
         @y=y
     end
 
+    def size
+        1
+    end
+
     def to_s
         "#{@x},#{@y}"
     end
@@ -89,15 +93,19 @@ end
 
 class Line
     def initialize
-        @point = []
+        @points = []
     end
 
     def add(p)
-        @point << p
+        @points << p
+    end
+
+    def size
+        @points.size
     end
 
     def to_s
-        @point.join("\n")
+        @points.join("\n")
     end
 end
 
@@ -123,7 +131,7 @@ HERE
                  :layername=> @layername,
                  :type     => 1,
                  :num      => @geometry.size,
-                 :point    => @geometry.join("\n")}
+                 :point    => @geometry}
     end
 
     def to_s
@@ -144,8 +152,12 @@ class Polygon
         @lineid << l
     end
 
+    def size
+        @lineid.size
+    end
+
     def to_s
-        @lineid.join(',') 
+        @lineid.join(",") 
     end
 end
 
@@ -171,7 +183,7 @@ HERE
                  :layername=> @layername,
                  :point    => Point.new(1,1),
                  :num      => @geometry.size,
-                 :line     => @geometry.join(',')}
+                 :line     => @geometry}
     end
 
     def to_s
@@ -408,12 +420,12 @@ HERE
             oid = id + l
             pointNum = rand(100..100000)
             start_point,end_point = calculate_line_point(l)
-            points = generateLinePoint(start_point,end_point,pointNum)
+            geoline = generateLinePoint(start_point,end_point,pointNum)
 
             layer = @vct.create_layer("Line",oid,@table.clone) if l % 100 == 1
             objectid = layer.get_next_id
 
-            line = FLine.new(objectid,layer.id,layer.name,points)
+            line = FLine.new(objectid,layer.id,layer.name,geoline)
             attribute = Attribute.new(objectid,layer.id,@attr)
             feat = layer.create_feature(line,attribute)
 
@@ -438,20 +450,20 @@ HERE
     end
 
     def generateLinePoint(s,e,n)
-        points = []
+        line = Line.new()
         width = (e.x-s.x).to_f/(n+1)
         heigh = (e.y-s.y).to_f/(n+1)
 
-        points << s
+        line.add(s)
 
         n.times do |n|
             point = Point.new(s.x + width*(n+1),s.y + heigh*(n+1))
-            points << point
+            line.add(point)
         end
 
-        points << e
+        line.add(e)
 
-        return points
+        return line
     end
 
     def fake_polygon
@@ -468,11 +480,14 @@ HERE
             layer = @vct.create_layer("Polygon",oid,@table.clone) if k % 100 == 1
             objectid = layer.get_next_id
 
-            polygon = FPolygon.new(objectid,layer.id,layer.name,
-                        ["#{l1+@pointNum}",
-                        "#{l2+@pointNum}",
-                        "-#{l3+@pointNum}",
-                        "-#{l4+@pointNum}"])
+            geopolygon = Polygon.new()
+
+            geopolygon.add "#{l1+@pointNum}"
+            geopolygon.add "#{l2+@pointNum}"
+            geopolygon.add "-#{l3+@pointNum}"
+            geopolygon.add "-#{l4+@pointNum}"
+
+            polygon = FPolygon.new(objectid,layer.id,layer.name,geopolygon)
 
             attribute = Attribute.new(objectid ,layer.id,@attr)
 
