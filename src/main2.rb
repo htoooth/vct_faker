@@ -610,16 +610,6 @@ HERE
     end
 end
 
-class EfcDataset < VctDataset
-    def initialize
-    end
-end
-
-class FciDataset < VctDataset
-    def initialize
-    end
-end
-
 def dataset2file(vctds,vctfile)
     vctfile.head do |f|
         f.puts vctds.srs
