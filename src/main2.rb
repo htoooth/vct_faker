@@ -210,7 +210,7 @@ end
 
 class Layer
     attr_accessor :id,:name,:type,:table,:field,:feats;
-    def initialize(id,name,type,table,objectid,tabledefn,ds_featurelist)
+    def initialize(id,name,type,table,objectid,tabledefn)
         @id = id
         @name = name
         @type = type
@@ -219,12 +219,10 @@ class Layer
         @objectid = objectid
         @field.name = table
         @feats = []
-        @ds_featurelist = ds_featurelist
     end
 
     def create_feature(geo,attri)
         feat = VctFeature.new(@objectid,geo,attri)
-        @ds_featurelist[@objectid] = feat
 
         @objectid += 1
         @feats << feat
@@ -254,7 +252,7 @@ class VctFeature
 end
 
 class VctDataset
-    attr_accessor :layers,:name,:srs,:featurelist
+    attr_accessor :layers,:name,:srs
     def initialize(name)
         @name = name
         @layers = []
@@ -262,8 +260,6 @@ class VctDataset
                    :id   => '100',
                    :table=> 'table'}
         @layercode = 0
-        @featurelist = {}
-        
     end
 
     def create_layer(type,objectid,tabledefn)
@@ -273,8 +269,7 @@ class VctDataset
                           type,
                           @prefix[:table] + @layercode.to_s,
                           objectid,
-                          tabledefn,
-                          @featurelist)
+                          tabledefn)
         @layers << layer
         return layer
     end
@@ -286,10 +281,6 @@ class VctDataset
     def clone
        vctds = VctDataset.new(@name)
        vctds.srs = @srs
-       vctds.featurelist = @featurelist
-       vctds.point_featurelist = @point_featurelist
-       vctds.line_featurelist = @line_featurelist
-       vctds.polygon_featurelist = @polygon_featurelist
        return vctds
     end
 end
@@ -360,18 +351,20 @@ class VctFile
 end
 
 class VctCreater
-    attr_accessor :vct,
-    attr_accessor :point_features,:line_features,:polygon_features
+    attr_accessor :vct
+    attr_accessor :points,:lines,:polygons
     def initialize(vct_ds,size)
-        @vct= vct_ds
         @pointNum = size ** 2
         @lineNum =  2 * size ** 2 - 2*size
         @polygonNum = (size - 1) ** 2
         @n = size
 
-        # 这个要填
+        @vct= vct_ds
         @attr = []
-        @table = Table.new("test") 
+        @table = Table.new("test")
+        @points={}
+        @lines= {}
+        @polygons= {}
     end
 
     def fake_head
@@ -541,6 +534,55 @@ HERE
         fake_point()
         fake_line()
         fake_polygon()
+    end
+
+    def fake
+       fake_head()
+       fake_table_structure()
+       fake_efc_point() 
+       fake_efc_line()
+       fake_ecf_polygon()
+       fake_attribute()
+    end
+
+    def fake_efc_point
+        (1..@pointNum).each do |p|
+            objectid = p
+            i = (p - 1) / @n
+            j = (p - 1) % @n 
+            @points[objectid] = Point.new(i,j)
+        end
+    end
+
+    def fake_efc_line
+        id = @pointNum
+        (1..@lineNum).each do |l|
+            objectid = id + l
+            pointNum = rand(100..100000)
+            start_point,end_point = calculate_line_point(l)
+            line = generateLinePoint(start_point,end_point,pointNum)
+            @lines[objectid] = line
+        end
+    end
+
+    def fake_efc_polygon
+        id = @pointNum + @lineNum
+        (1..@polygonNum).each do |k|
+            objectid = id +k
+
+            l1 = (k-1)/(@n-1)*(2*@n-1) + (k-1)%(@n-1) +1
+            l2 = l1+@n
+            l3 = l1+2*@n-1 
+            l4 = l1+@n-1 
+
+            polygon = Polygon.new()
+            polygon.add "#{l1+@pointNum}"
+            polygon.add "#{l2+@pointNum}"
+            polygon.add "-#{l3+@pointNum}"
+            polygon.add "-#{l4+@pointNum}"
+
+            @polygons[objectid] = polygon
+       end
     end
 
     def fake_fci
