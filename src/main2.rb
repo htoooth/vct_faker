@@ -62,16 +62,27 @@ class FPoint
 %<num>d
 %<point>s
 HERE
+
+    attr_accessor :objectid,:layerid,:layername,:geometry
     def initialize(objectid,layerid,layername,point)
-        @attr= {:objectid => objectid,
-                :layerid  => layerid, 
-                :layername=> layername,
-                :num      => 1,
-                :point    => point}
+        @layerid = layerid
+        @layername = layername
+        @objectid = objectid
+        @geometry = point
+
+        @attribute= {:objectid => @objectid,
+                     :layerid  => @layerid, 
+                     :layername=> @layername,
+                     :num      => 1,
+                     :point    => @geometry}
     end
 
     def to_s
-        sprintf(@@template,@attr)
+        sprintf(@@template,@attribute)
+    end
+
+    def clone
+        FPoint.new(@objectid,@layerid,@layername,@geometry)
     end
 end
 
@@ -100,17 +111,27 @@ class FLine
 %<point>s
 HERE
 
-    def initialize(objectid,layerid,layername,point)
-        @attr = {:objectid =>objectid,
-                 :layerid  =>layerid,
-                 :layername=>layername,
-                 :type     =>1,
-                 :num      =>point.size,
-                 :point    =>point.join("\n")}
+    attr_accessor :objectid,:layerid,:layername,:geometry
+    def initialize(objectid,layerid,layername,points)
+        @objectid = objectid
+        @layerid = layerid
+        @layername = layername
+        @geometry = points
+
+        @attr = {:objectid => @objectid,
+                 :layerid  => @layerid,
+                 :layername=> @layername,
+                 :type     => 1,
+                 :num      => @geometry.size,
+                 :point    => @geometry.join("\n")}
     end
 
     def to_s
         sprintf(@@template,@attr)
+    end
+
+    def clone
+        FLine.new(@objectid,@layerid,@layername,@geometry)
     end
 end
 
@@ -138,17 +159,27 @@ class FPolygon
 %<line>s
 HERE
 
-    def initialize(objectid,layerid,layername,line)
-        @attr = {:objectid =>objectid,
-                 :layerid  =>layerid,
-                 :layername=>layername,
-                 :point    =>Point.new(1,1),
-                 :num      =>line.size,
-                 :line     =>line.join(',')}
+    attr_accessor :objectid,:layerid,:layername,:geometry
+    def initialize(objectid,layerid,layername,lines)
+        @objectid = objectid
+        @layerid = layerid
+        @layername = layername
+        @geometry = lines
+
+        @attr = {:objectid => @objectid,
+                 :layerid  => @layerid,
+                 :layername=> @layername,
+                 :point    => Point.new(1,1),
+                 :num      => @geometry.size,
+                 :line     => @geometry.join(',')}
     end
 
     def to_s
         sprintf(@@template,@attr)
+    end
+
+    def clone
+        FPolygon.new(@objectid,@layerid,@layername,@geometry)
     end
 end
 
