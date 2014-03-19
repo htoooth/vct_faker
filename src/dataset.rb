@@ -43,7 +43,7 @@ class Table
 end
 
 class Point
-    attr_accessor :x,:y
+    attr_accessor :objectid,:x,:y
     def initialize(x,y)
         @x=x
         @y=y
@@ -85,13 +85,11 @@ HERE
         sprintf(@@template,@attribute)
     end
 
-    def clone
-        FPoint.new(@objectid,@layerid,@layername,@geometry)
-    end
 end
 
 
 class Line
+    attr_accessor :objectid
     def initialize
         @points = []
     end
@@ -138,12 +136,10 @@ HERE
         sprintf(@@template,@attr)
     end
 
-    def clone
-        FLine.new(@objectid,@layerid,@layername,@geometry)
-    end
 end
 
 class Polygon
+    attr_accessor :objectid
     def initialize
         @lineid = []
     end
@@ -188,10 +184,6 @@ HERE
 
     def to_s
         sprintf(@@template,@attr)
-    end
-
-    def clone
-        FPolygon.new(@objectid,@layerid,@layername,@geometry)
     end
 end
 
