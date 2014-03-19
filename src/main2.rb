@@ -360,6 +360,7 @@ class VctCreater
         @n = size
 
         @vct= vct_ds
+        @srs = ''
         @attr = []
         @table = Table.new("test")
         @points={}
@@ -368,7 +369,7 @@ class VctCreater
     end
 
     def fake_head
-        @vct.srs = <<HERE
+        @srs = <<HERE
 Datamark: LANDUSE.VCTFILE
 Version: 2.0
 Unit: M
@@ -529,6 +530,7 @@ HERE
 
     def fake_efc
         fake_head()
+        fake_efc_head()
         fake_table_structure()
         fake_attribute()
         fake_point()
@@ -543,6 +545,10 @@ HERE
        fake_efc_line()
        fake_ecf_polygon()
        fake_attribute()
+    end
+
+    def fake_efc_head
+        @vct.srs = @srs
     end
 
     def fake_efc_point
@@ -601,6 +607,16 @@ HERE
 
     def fake_fci_polygon
         #TODO
+    end
+end
+
+class EfcDataset < VctDataset
+    def initialize
+    end
+end
+
+class FciDataset < VctDataset
+    def initialize
     end
 end
 
