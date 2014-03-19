@@ -249,12 +249,12 @@ class VctFeature
     end
 
     def to_s
-        "==id==:#{@id}\n==geometry==:\n#{@geometry}==field==:\n#{@attribute}\n=========="
+        "id=:#{@id}\ngeometry=:\n#{@geometry}field=:#{@attribute}\n==="
     end
 end
 
 class VctDataset
-    attr_accessor :layers,:name,:srs,:featurelist,:point_featurelist,:line_featurelist,:polygon_featurelist
+    attr_accessor :layers,:name,:srs,:featurelist
     def initialize(name)
         @name = name
         @layers = []
@@ -263,9 +263,7 @@ class VctDataset
                    :table=> 'table'}
         @layercode = 0
         @featurelist = {}
-        @point_featurelist = {}
-        @line_featurelist = {}
-        @polygon_featurelist = {}
+        
     end
 
     def create_layer(type,objectid,tabledefn)
@@ -362,7 +360,8 @@ class VctFile
 end
 
 class VctCreater
-    attr_accessor :vct
+    attr_accessor :vct,
+    attr_accessor :point_features,:line_features,:polygon_features
     def initialize(vct_ds,size)
         @vct= vct_ds
         @pointNum = size ** 2
