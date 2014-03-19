@@ -9,7 +9,7 @@ class VctCreater
         @polygonNum = (size - 1) ** 2
         @n = size
 
-        @srs = nil 
+        @srs = nil
         @attribute_value = []
         @table_define = Table.new("test")
         @points=   []
@@ -119,7 +119,7 @@ HERE
         (1..@pointNum).each do |p|
             objectid = p
             i = (p - 1) / @n
-            j = (p - 1) % @n 
+            j = (p - 1) % @n
             point = Point.new(i,j)
             point.objectid = objectid
             @points << point
@@ -130,7 +130,7 @@ HERE
         id = @pointNum
         (1..@lineNum).each do |l|
             objectid = id + l
-            pointNum = rand(2..3)
+            pointNum = rand(1..50)
             start_point,end_point = calculate_line_point(l)
             line = generateLinePoint(start_point,end_point,pointNum)
             line.objectid = objectid

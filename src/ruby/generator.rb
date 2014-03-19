@@ -11,7 +11,7 @@ class Generator
 
     def point
         @vctfake.points.each do |i|
-            @current_layer = @vct.create_layer("Point",@vctfake.table_define) if yield(i)
+            @current_layer = @vct.create_layer("Point",@vctfake.table_define.clone) if yield(i)
             point = FPoint.new(i.objectid,@current_layer.id,@current_layer.name,i)
             attribute = Attribute.new(i.objectid,@current_layer.id,@vctfake.attribute_value)
             feat = @current_layer.create_feature(point,attribute)
@@ -20,7 +20,7 @@ class Generator
 
     def line
         @vctfake.lines.each do |i|
-            @current_layer = @vct.create_layer("Line",@vctfake.table_define) if yield(i)
+            @current_layer = @vct.create_layer("Line",@vctfake.table_define.clone) if yield(i)
             line = FLine.new(i.objectid,@current_layer.id,@current_layer.name,i)
             attribute = Attribute.new(i.objectid,@current_layer.id,@vctfake.attribute_value)
             feat = @current_layer.create_feature(line,attribute)
@@ -29,7 +29,7 @@ class Generator
 
     def polygon
         @vctfake.polygons.each do |i|
-            @current_layer = @vct.create_layer("Polygon",@vctfake.table_define) if yield(i)
+            @current_layer = @vct.create_layer("Polygon",@vctfake.table_define.clone) if yield(i)
             polygon = FPolygon.new(i.objectid,@current_layer.id,@current_layer.name,i)
             attribute = Attribute.new(i.objectid ,@current_layer.id,@vctfake.attribute_value)
             feat = @current_layer.create_feature(polygon,attribute)
@@ -44,13 +44,13 @@ end
 class EfcDatasetGenerator < Generator
     def initialize(vctfake,name)
         super
-        @count = 100
-    end 
+        @efc = 100
+    end
 
-    def point 
+    def point
         num = 1
         super do |i|
-            b = if num % @count == 1
+            b = if num % @efc == 1
                 true
             else
                 false
@@ -63,7 +63,7 @@ class EfcDatasetGenerator < Generator
     def line
         num = 1
         super do |i|
-            b = if num % @count == 1
+            b = if num % @efc == 1
                 true
             else
                 false
@@ -76,7 +76,7 @@ class EfcDatasetGenerator < Generator
     def polygon
         num = 1
         super do |i|
-            b = if num % @count == 1
+            b = if num % @efc == 1
                 true
             else
                 false
@@ -98,44 +98,53 @@ end
 class FciDatasetGenerator < Generator
     def initialize(vctfake,name)
         super
-        @count = 100
+        @fci = 100
     end
 
-    def point 
-        num = 1
+    def point
+        sore = 0
         super do |i|
-            b = if num % @count == 1
+            b = if (sore == 0) or (sore >= @fci)
                 true
+                sore = 0
             else
                 false
             end
-            num +=1
+
+            sore += i.size
+
             b
         end
     end
 
     def line
-        num = 1
+        sore = 0
         super do |i|
-            b = if num % @count == 1
+            b = if (sore == 0) or (sore >= @fci)
                 true
+                sore = 0
             else
                 false
             end
-            num +=1
+
+            sore += i.size
+
             b
         end
     end
 
     def polygon
-        num = 1
+        sore = 0
         super do |i|
-            b = if num % @count == 1
+            b = if (sore == 0) or (sore >= @fci)
                 true
+                sore = 0
             else
                 false
             end
-            num +=1
+
+            sore += i.size
+
             b
         end
     end
