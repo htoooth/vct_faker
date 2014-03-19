@@ -53,25 +53,6 @@ def dataset2file(vctds,vctfile)
             f.puts 
         end
     end
-    
-end
-
-def create_ds(name,size)
-    vct_ds   = VctDataset.new(name)
-    vct_fake = VctCreater.new(vct_ds,size) 
-    return vct_ds,vct_fake
-end
-
-def fake_vct_efc(vctds,vctfake)
-    vctfake.fake_efc
-    return vctds,vctfake
-end
-
-def fake_vct_fci(vctds,vctfake)
-    new_vct_ds = vctds.clone
-    vctfake.vct = new_vct_ds
-    vctfake.fake_fci
-    return new_vct_ds,vctfake
 end
 
 def create_file(name)
@@ -81,17 +62,21 @@ end
 def main(argv)
     size = argv[0] || 2
     name = argv[1] || 'TEST'
-    vct_ds,vct_fake  = create_ds(name,size.to_i)
 
-    efc_ds,efc_fake = fake_vct_efc(vct_ds,vct_fake)
+    vct_fake = VctCreater.new(size.to_i)
+    vct_fake.fake()
+
+    efc = EfcDatasetGenerator.new(vct_fake,name)
+    efc_ds = efc.generate()
     vct_file_efc = create_file("#{name}_efc.VCT")
-    dataset2file(vct_ds,vct_file_efc)
+    dataset2file(efc_ds,vct_file_efc)
     vct_file_efc.close
 
-    fci_ds,fci_fake = fake_vct_fci(efc_ds,efc_fake)
-    vct_file_fci = create_file("#{name}_fci.VCT")
-    dataset2file(fci_ds,vct_file_fci)
-    vct_file_fci.close
+    # fci = FciDatasetGenerator.new(vct_fake,name)
+    # fci_ds = fci.generate()
+    # vct_file_fci = create_file("#{name}_fci.VCT")
+    # dataset2file(fci_ds,vct_file_fci)
+    # vct_file_fci.close
 
 end
 

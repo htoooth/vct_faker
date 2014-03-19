@@ -202,27 +202,20 @@ end
 
 class Layer
     attr_accessor :id,:name,:type,:table,:field,:feats;
-    def initialize(id,name,type,table,objectid,tabledefn)
+    def initialize(id,name,type,table,tabledefn)
         @id = id
         @name = name
         @type = type
         @table = table
         @field = tabledefn
-        @objectid = objectid
         @field.name = table
         @feats = []
     end
 
     def create_feature(geo,attri)
-        feat = VctFeature.new(@objectid,geo,attri)
-
-        @objectid += 1
+        feat = VctFeature.new(geo.objectid,geo,attri)
         @feats << feat
         return feat
-    end
-
-    def get_next_id
-        return @objectid 
     end
 
     def to_s
@@ -254,13 +247,12 @@ class VctDataset
         @layercode = 0
     end
 
-    def create_layer(type,objectid,tabledefn)
+    def create_layer(type,tabledefn)
         @layercode = @layercode +1
         layer = Layer.new(@prefix[:id] + @layercode.to_s,
                           @prefix[:name] + @layercode.to_s,
                           type,
                           @prefix[:table] + @layercode.to_s,
-                          objectid,
                           tabledefn)
         @layers << layer
         return layer

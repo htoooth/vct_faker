@@ -1,17 +1,15 @@
 class VctCreater
-    attr_accessor :vct
     attr_accessor :points,:lines,:polygons
     attr_accessor :table_define
     attr_accessor :attribute_value
     attr_accessor :srs
-    def initialize(vct_ds,size)
+    def initialize(size)
         @pointNum = size ** 2
         @lineNum =  2 * size ** 2 - 2*size
         @polygonNum = (size - 1) ** 2
         @n = size
 
-        @vct= vct_ds
-        @srs = ''
+        @srs = nil 
         @attribute_value = []
         @table_define = Table.new("test")
         @points=   []
@@ -20,6 +18,7 @@ class VctCreater
     end
 
     def fake_head
+
         @srs = <<HERE
 Datamark: LANDUSE.VCTFILE
 Version: 2.0
@@ -39,41 +38,6 @@ Scale: 10000
 Date: 20100611
 Separator: ,
 HERE
-    end
-
-    def fake_efc_point
-        layer = nil
-        (1..@pointNum).each do |p|
-            layer = @vct.create_layer("Point",p, @table_define.clone) if p % 100 == 1
-            i = (p - 1) / @n
-            j = (p - 1) % @n
-
-            objectid = layer.get_next_id
-
-            point = FPoint.new(objectid,layer.id,layer.name,Point.new(i,j))
-            attribute = Attribute.new(objectid,layer.id,@attribute_value)
-            feat = layer.create_feature(point,attribute)
-
-        end
-    end
-
-    def fake_efc_line
-        id = @pointNum
-        layer = nil
-        (1..@lineNum).each do |l|
-            oid = id + l
-            pointNum = rand(100..100000)
-            start_point,end_point = calculate_line_point(l)
-            geoline = generateLinePoint(start_point,end_point,pointNum)
-
-            layer = @vct.create_layer("Line",oid,@table_define.clone) if l % 100 == 1
-            objectid = layer.get_next_id
-
-            line = FLine.new(objectid,layer.id,layer.name,geoline)
-            attribute = Attribute.new(objectid,layer.id,@attribute_value)
-            feat = layer.create_feature(line,attribute)
-
-        end
     end
 
     def calculate_line_point(l)
@@ -110,35 +74,6 @@ HERE
         return line
     end
 
-    def fake_efc_polygon
-        id = @pointNum + @lineNum
-        layer = nil
-        (1..@polygonNum).each do |k|
-            oid = id +k
-
-            l1 = (k-1)/(@n-1)*(2*@n-1) + (k-1)%(@n-1) +1
-            l2 = l1+@n
-            l3 = l1+2*@n-1 
-            l4 = l1+@n-1 
-
-            layer = @vct.create_layer("Polygon",oid,@table_define.clone) if k % 100 == 1
-            objectid = layer.get_next_id
-
-            geopolygon = Polygon.new()
-
-            geopolygon.add "#{l1+@pointNum}"
-            geopolygon.add "#{l2+@pointNum}"
-            geopolygon.add "-#{l3+@pointNum}"
-            geopolygon.add "-#{l4+@pointNum}"
-
-            polygon = FPolygon.new(objectid,layer.id,layer.name,geopolygon)
-
-            attribute = Attribute.new(objectid ,layer.id,@attribute_value)
-
-            feat = layer.create_feature(polygon,attribute)
-       end
-   end
-
    def fake_table_structure
 
         t = <<HERE
@@ -159,6 +94,7 @@ X54,Float,10,3
 Y54,Float,10,3
 Z54,Float,10,3
 HERE
+
         fields = t.split("\n")
 
         fields.each do |f|
@@ -179,32 +115,14 @@ HERE
                 4.5,3.2,2.1]
     end
 
-    def fake_efc
-        fake_efc_head()
-        fake_efc_point()
-        fake_efc_line()
-        fake_efc_polygon()
-    end
-
-    def fake
-       fake_head()
-       fake_table_structure()
-       fake_point() 
-       fake_line()
-       fake_polygon()
-       fake_attribute()
-    end
-
-    def fake_efc_head
-        @vct.srs = @srs
-    end
-
     def fake_point
         (1..@pointNum).each do |p|
             objectid = p
             i = (p - 1) / @n
             j = (p - 1) % @n 
-            @points[objectid] = Point.new(i,j)
+            point = Point.new(i,j)
+            point.objectid = objectid
+            @points << point
         end
     end
 
@@ -212,10 +130,11 @@ HERE
         id = @pointNum
         (1..@lineNum).each do |l|
             objectid = id + l
-            pointNum = rand(100..100000)
+            pointNum = rand(2..3)
             start_point,end_point = calculate_line_point(l)
             line = generateLinePoint(start_point,end_point,pointNum)
-            @lines[objectid] = line
+            line.objectid = objectid
+            @lines << line
         end
     end
 
@@ -234,32 +153,19 @@ HERE
             polygon.add "#{l2+@pointNum}"
             polygon.add "-#{l3+@pointNum}"
             polygon.add "-#{l4+@pointNum}"
+            polygon.objectid = objectid
 
-            @polygons[objectid] = polygon
+            @polygons << polygon
        end
     end
 
-    def fake_fci
-        fake_fci_head()
-        fake_fci_point()
-        fake_fci_line()
-        fake_fci_polygon()
-    end
-
-    def fake_fci_point
-        #TODO
-    end
-
-    def fake_fci_line
-        #TODO
-    end
-
-    def fake_fci_polygon
-        #TODO
-    end
-
-    def fake_fci_head
-        @vct.srs = @srs
+    def fake
+       fake_head()
+       fake_table_structure()
+       fake_point() 
+       fake_line()
+       fake_polygon()
+       fake_attribute()
     end
 
 end
