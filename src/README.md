@@ -3,20 +3,20 @@ List
 
 I want to realize my programming language so there are some languages that must be studied.
 
-* c
+* [c](http://www.cprogramming.com/)
 * [ceylon](http://ceylon-lang.org/)
 * [clojure](http://clojure.org/)
 * [cobra](http://cobra-language.com/)
 * [coffeescript](http://coffeescript.org/)
-* c++
-* c# 
+* [c++](http://www.cplusplus.com/)
+* [c#](http://msdn.microsoft.com/en-us/library/z1zx9t92.aspx)
 * [erlang](http://www.erlang.org/)
 * [f#](http://fsharp.org/)
 * [go](http://golang.org/)
 * [groovy](http://groovy.codehaus.org/)
 * [haskell](http://www.haskell.org/haskellwiki/Haskell)
 * [haxe](http://haxe.org/)
-* java
+* [java](http://www.java.com/en/)
 * [javascript](http://www.w3schools.com/js/DEFAULT.asp)
 * [julia](http://julialang.org/)
 * [kotlin](http://kotlin.jetbrains.org/)
