@@ -4,33 +4,33 @@ List
 I want to realize my programming language so there are some languages that must be studied.
 
 * c
-* ceylon
-* clojure
-* cobra
-* coffeescript
+* [ceylon](http://ceylon-lang.org/)
+* [clojure](http://clojure.org/)
+* [cobra](http://cobra-language.com/)
+* [coffeescript](http://coffeescript.org/)
 * c++
 * c# 
-* erlang
-* f#
-* go
-* groovy
-* haskell
-* haxe
+* [erlang](http://www.erlang.org/)
+* [f#](http://fsharp.org/)
+* [go](http://golang.org/)
+* [groovy](http://groovy.codehaus.org/)
+* [haskell](http://www.haskell.org/haskellwiki/Haskell)
+* [haxe](http://haxe.org/)
 * java
-* javascript
-* julia
-* kotlin
-* livescript
-* lua
-* nimrod
-* ocaml
-* opendylan
-* perl
-* php
-* python
-* ruby
-* scala
-* scheme
+* [javascript](http://www.w3schools.com/js/DEFAULT.asp)
+* [julia](http://julialang.org/)
+* [kotlin](http://kotlin.jetbrains.org/)
+* [livescript](http://livescript.net/)
+* [lua](http://www.lua.org/)
+* [nimrod](http://nimrod-lang.org/)
+* [ocaml](http://ocaml.org/)
+* [opendylan](https://opendylan.org/)
+* [perl](http://www.perl.org/)
+* [php](http://www.php.net/)
+* [python](https://www.python.org/)
+* [ruby](https://www.ruby-lang.org/)
+* [scala](http://www.scala-lang.org/)
+* [scheme](http://www.scheme.com/)
 
 This list includes function programming languages and imperative programming languages.
 
