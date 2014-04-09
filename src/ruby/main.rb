@@ -14,13 +14,13 @@ def main(argv)
     vct_fake = VctCreator.new(size.to_i)
     vct_fake.fake()
 
-    efc = EfcDatasetGenerator.new(vct_fake,name)
+    efc = EfcDatasetGenerator.new(vct_fake,name,100)
     efc_ds = efc.generate()
     vct_file_efc = create_file("#{name}_efc.VCT")
     dataset2file(efc_ds,vct_file_efc)
     vct_file_efc.close
 
-    fci = FciDatasetGenerator.new(vct_fake,name)
+    fci = FciDatasetGenerator.new(vct_fake,name,100)
     fci_ds = fci.generate()
     vct_file_fci = create_file("#{name}_fci.VCT")
     dataset2file(fci_ds,vct_file_fci)

@@ -42,9 +42,9 @@ class VctGenerator
 end
 
 class EfcDatasetGenerator < VctGenerator
-    def initialize(vctfake,name)
-        super
-        @efc = 100
+    def initialize(vctfake,name,efc)
+        super(vctfake,name)
+        @efc = efc 
     end
 
     def point
@@ -96,9 +96,9 @@ class EfcDatasetGenerator < VctGenerator
 end
 
 class FciDatasetGenerator < VctGenerator
-    def initialize(vctfake,name)
-        super
-        @fci = 100
+    def initialize(vctfake,name,fci)
+        super(vctfake,name)
+        @fci = fci
     end
 
     def point
