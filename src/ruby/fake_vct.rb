@@ -76,7 +76,6 @@ opt_parser = OptionParser.new do |opt|
 
   opt.on("-h","--help","help") do
     puts opt_parser
-
     exit
   end
 end
