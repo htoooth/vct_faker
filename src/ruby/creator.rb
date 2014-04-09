@@ -1,4 +1,4 @@
-class VctCreater
+class VctCreator
     attr_accessor :points,:lines,:polygons
     attr_accessor :table_define
     attr_accessor :attribute_value

@@ -1,5 +1,5 @@
 require_relative "dataset"
-require_relative "file"
+require_relative "vctfile"
 require_relative "creator"
 require_relative "generator"
 
@@ -63,7 +63,7 @@ def main(argv)
     size = argv[0] || 2
     name = argv[1] || 'TEST'
 
-    vct_fake = VctCreater.new(size.to_i)
+    vct_fake = VctCreator.new(size.to_i)
     vct_fake.fake()
 
     efc = EfcDatasetGenerator.new(vct_fake,name)
