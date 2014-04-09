@@ -11,7 +11,7 @@ def main(argv)
     size = argv[0] || 2
     name = argv[1] || 'TEST'
 
-    vct_fake = VctCreator.new(size.to_i)
+    vct_fake = VctCreator.new(size.to_i,(1..50))
     vct_fake.fake()
 
     efc = EfcDatasetGenerator.new(vct_fake,name,100)

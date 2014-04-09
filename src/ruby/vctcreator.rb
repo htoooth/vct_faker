@@ -3,7 +3,7 @@ class VctCreator
     attr_accessor :table_define
     attr_accessor :attribute_value
     attr_accessor :srs
-    def initialize(size)
+    def initialize(size,linerange)
         @pointNum = size ** 2
         @lineNum =  2 * size ** 2 - 2*size
         @polygonNum = (size - 1) ** 2
@@ -15,6 +15,7 @@ class VctCreator
         @points=   []
         @lines=    []
         @polygons= []
+        @linerange = linerange
     end
 
     def fake_head
@@ -130,7 +131,7 @@ HERE
         id = @pointNum
         (1..@lineNum).each do |l|
             objectid = id + l
-            pointNum = rand(1..50)
+            pointNum = rand(@linerange)
             start_point,end_point = calculate_line_point(l)
             line = generateLinePoint(start_point,end_point,pointNum)
             line.objectid = objectid
