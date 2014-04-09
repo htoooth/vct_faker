@@ -21,15 +21,20 @@ def main(opt)
     vct_fake = VctCreator.new(size.to_i,linerange)
     vct_fake.fake()
 
-    efc = EfcDatasetGenerator.new(vct_fake,name,efc)
+    efc_name = "#{name}_efc.VCT"
+    efc_index = "#{name}_efc.INDEX"
+    fci_name = "#{name}_fci.VCT"
+    fci_index = "#{name}_fci.INDEX"
+
+    efc = EfcDatasetGenerator.new(vct_fake,efc_index,efc)
     efc_ds = efc.generate()
-    vct_file_efc = create_file("#{name}_efc.VCT")
+    vct_file_efc = create_file(efc_name)
     dataset2file(efc_ds,vct_file_efc)
     vct_file_efc.close
 
-    fci = FciDatasetGenerator.new(vct_fake,name,fci)
+    fci = FciDatasetGenerator.new(vct_fake,fci_index,fci)
     fci_ds = fci.generate()
-    vct_file_fci = create_file("#{name}_fci.VCT")
+    vct_file_fci = create_file(fci_name)
     dataset2file(fci_ds,vct_file_fci)
     vct_file_fci.close
 
