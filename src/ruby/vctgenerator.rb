@@ -3,6 +3,12 @@ class VctGenerator
         @vct = VctDataset.new(name)
         @vctfake = vctfake
         @current_layer = nil
+
+        @point_index = IndexFile.new("#{name}.point")
+        @line_index = IndexFile.new("#{name}.line")
+        @polygon_index = IndexFile.new("#{name}.polygon")
+
+        @feature_count = @vctfake.points.size + @vctfake.lines.size + @vctfake.polygons.size
     end
 
     def head
@@ -24,6 +30,8 @@ class VctGenerator
             line = FLine.new(i.objectid,@current_layer.id,@current_layer.name,i)
             attribute = Attribute.new(i.objectid,@current_layer.id,@vctfake.attribute_value)
             feat = @current_layer.create_feature(line,attribute)
+
+            @line_index.write "#{i.objectid} #{i.size}"
         end
     end
 
@@ -33,10 +41,29 @@ class VctGenerator
             polygon = FPolygon.new(i.objectid,@current_layer.id,@current_layer.name,i)
             attribute = Attribute.new(i.objectid ,@current_layer.id,@vctfake.attribute_value)
             feat = @current_layer.create_feature(polygon,attribute)
+
+            # each polygon point count
+            point_count = 0
+            i.eachLineId do |l|
+                geo = @vctfake.lines.select do |e| 
+                    e.objectid == l.to_i.abs
+                end
+                geo.each { |e| point_count += e.size }
+            end
+            @polygon_index.write "#{i.objectid} #{point_count}"
+
         end
     end
 
     def generate()
+        @point_index.write "point_count #{@vctfake.points.size}"
+        @point_index.write "feature_count #{@feature_count}"
+        @point_index.write "task_count #{@vct.getLayerSize}"
+
+        @point_index.close
+        @line_index.close
+        @polygon_index.close
+        
         return @vct
     end
 end
@@ -105,8 +132,8 @@ class FciDatasetGenerator < VctGenerator
         sore = 0
         super do |i|
             b = if (sore == 0) or (sore >= @fci)
-                true
                 sore = 0
+                true
             else
                 false
             end
@@ -155,6 +182,24 @@ class FciDatasetGenerator < VctGenerator
         line()
         polygon()
         super
+    end
+end
+
+class IndexFile
+    def initialize(fileName)
+        if File.exist? fileName
+            puts "#{fileName} is exist. Now delete!" 
+            File.delete fileName
+        end
+        @file = File.new(fileName,"w")
+    end
+
+    def write(context)
+        @file.puts context
+    end
+
+    def close
+        @file.close
     end
 end
 

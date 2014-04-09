@@ -148,6 +148,10 @@ class Polygon
         @lineid << l
     end
 
+    def eachLineId
+        @lineid.each { |e| yield(e) }
+    end
+
     def size
         @lineid.size
     end
@@ -258,13 +262,12 @@ class VctDataset
         return layer
     end
 
+    def getLayerSize
+        @layers.size
+    end
+
     def to_s
         "#{@name}:\n,#{@layers.join("\n")}"
     end
-
-    def clone
-       vctds = VctDataset.new(@name)
-       vctds.srs = @srs
-       return vctds
-    end
+    
 end

@@ -18,6 +18,14 @@ class VctCreator
         @linerange = linerange
     end
 
+    def getLineMax()
+        @linerange.end
+    end
+
+    def getLinMin()
+        @linerange.begin
+    end
+    
     def fake_head
 
         @srs = <<HERE

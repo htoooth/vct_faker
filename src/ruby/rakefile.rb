@@ -1,6 +1,10 @@
 require 'rake/clean'
 
 CLEAN.include('*.VCT')
+CLEAN.include('*.INDEX')
+CLEAN.include('*.point')
+CLEAN.include('*.line')
+CLEAN.include('*.polygon')
 
 desc "generate task"
 task :generate do
