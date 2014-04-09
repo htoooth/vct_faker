@@ -1,4 +1,4 @@
-class Generator
+class VctGenerator
     def initialize(vctfake,name)
         @vct = VctDataset.new(name)
         @vctfake = vctfake
@@ -41,7 +41,7 @@ class Generator
     end
 end
 
-class EfcDatasetGenerator < Generator
+class EfcDatasetGenerator < VctGenerator
     def initialize(vctfake,name)
         super
         @efc = 100
@@ -95,7 +95,7 @@ class EfcDatasetGenerator < Generator
     end
 end
 
-class FciDatasetGenerator < Generator
+class FciDatasetGenerator < VctGenerator
     def initialize(vctfake,name)
         super
         @fci = 100

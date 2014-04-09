@@ -1,59 +1,7 @@
-require_relative "dataset"
+require_relative "vctdataset"
 require_relative "vctfile"
-require_relative "creator"
-require_relative "generator"
-
-def dataset2file(vctds,vctfile)
-    vctfile.head do |f|
-        f.puts vctds.srs
-    end
-
-    vctfile.feature do |f|
-        vctds.layers.each { |i|  f.puts i }
-    end
-
-    vctfile.table do |f|
-        vctds.layers.each { |i| f.puts i.field  }
-    end
-
-    pointlayers = vctds.layers.select { |i|  i.type == "Point"}
-    vctfile.point do |f|
-        pointlayers.each do |l|
-            l.feats.each do |feat|
-                f.puts feat.geometry
-            end
-        end
-    end
-
-    linelayers = vctds.layers.select { |i| i.type == "Line"  }
-    vctfile.line do |f|
-        linelayers.each do |l|
-            l.feats.each do | feat|
-                f.puts feat.geometry
-            end
-        end
-    end
-
-    polygonlayers = vctds.layers.select { |i| i.type == "Polygon" }
-    vctfile.polygon do |f|
-        polygonlayers.each do |l|
-            l.feats.each do | feat|
-                f.puts feat.geometry
-            end
-        end
-    end
-
-    vctfile.attribute do |f|
-        vctds.layers.each do |layer|
-            f.puts layer.table
-            layer.feats.each do |feat|
-                f.puts feat.attribute
-            end
-            f.puts "TableEnd"
-            f.puts 
-        end
-    end
-end
+require_relative "vctcreator"
+require_relative "vctgenerator"
 
 def create_file(name)
     return VctFile.new(name)
