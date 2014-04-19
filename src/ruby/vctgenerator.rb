@@ -43,7 +43,7 @@ class VctGenerator
     end
 
     def polygon
-        puts "#{@vct.name} generate polygons."
+        puts "#{@vct.name} generate polygons at #{Time::now}."
         @vctfake.polygons.each do |i|
             @current_layer = @vct.create_layer("Polygon",@vctfake.table_define.clone) if yield(i)
             polygon = FPolygon.new(i.objectid,@current_layer.id,@current_layer.name,i)
@@ -52,17 +52,18 @@ class VctGenerator
 
             # each polygon point count
             point_count = 0
+            line_index=[]
             i.eachLineId do |l|
-                geo = @vctfake.lines.select do |e| 
+                line_index << @vctfake.lines.index do |e| 
                     e.objectid == l.to_i.abs
                 end
-                geo.each { |e| point_count += e.size }
+                line_index.each { |e| point_count += @vctfake.lines[e].size }
             end
             @polygon_index.write "#{i.objectid} #{point_count}"
 
         end
         @polygon_index.close
-        puts 'polygons done.'
+        puts "polygons done at #{Time::now}"
     end
 
     def generate()
