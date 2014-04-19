@@ -16,7 +16,7 @@ def main(opt)
     fci = opt[:fci]
     linerange = (opt[:min]..opt[:max])
 
-    puts "fake_vct -s #{size} -t #{name} -e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}"
+    puts "::::fake_vct -s #{size} -t #{name} -e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}"
 
     vct_fake = VctCreator.new(size.to_i,linerange)
     vct_fake.fake()

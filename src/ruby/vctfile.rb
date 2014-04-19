@@ -5,6 +5,7 @@ class VctFile
             File.delete fileName
         end
         @file = File.new(fileName,"w")
+        puts '============file start=================='
         puts "start write #{fileName}."
     end
 
@@ -88,6 +89,7 @@ class VctFile
 
     def close
         @file.close
+        puts '===========file end ==============='
     end
 
     def save

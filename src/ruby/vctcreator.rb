@@ -17,10 +17,13 @@ class VctCreator
         @polygons= []
         @linerange = linerange
 
+        puts '=========creator start==========='
+        puts '================================='
         puts "This work create geometry:"
         puts "Point num is #{@pointNum}."
         puts "Line num is #{@lineNum}."
         puts "Polygon num is #{@polygonNum}."
+        puts '================================='
     end
 
     def getLineMax()
@@ -187,6 +190,7 @@ HERE
        fake_polygon()
        fake_attribute()
        puts "creator's work is done."
+       puts '==========creator end=============='
     end
 
 end

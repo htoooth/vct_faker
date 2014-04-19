@@ -9,6 +9,8 @@ class VctGenerator
         @polygon_index = IndexFile.new("#{name}.polygon")
 
         @feature_count = @vctfake.points.size + @vctfake.lines.size + @vctfake.polygons.size
+
+        puts "==========generator start=============="
     end
 
     def head
@@ -69,6 +71,8 @@ class VctGenerator
         @point_index.close
         @line_index.close
         @polygon_index.close
+
+         puts "==========generator end=============="
         
         return @vct
     end
