@@ -72,7 +72,7 @@ class VctGenerator
         @line_index.close
         @polygon_index.close
 
-         puts "==========generator end at #{Time::now}=============="
+        puts "==========generator end at #{Time::now}=============="
         
         return @vct
     end
