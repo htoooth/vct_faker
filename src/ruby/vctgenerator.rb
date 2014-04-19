@@ -38,6 +38,7 @@ class VctGenerator
 
             @line_index.write "#{i.objectid} #{i.size}"
         end
+        @line_index.close
         puts 'lines done.'
     end
 
@@ -60,6 +61,7 @@ class VctGenerator
             @polygon_index.write "#{i.objectid} #{point_count}"
 
         end
+        @polygon_index.close
         puts 'polygons done.'
     end
 
@@ -67,13 +69,9 @@ class VctGenerator
         @point_index.write "point_count #{@vctfake.points.size}"
         @point_index.write "feature_count #{@feature_count}"
         @point_index.write "task_count #{@vct.getLayerSize}"
-
         @point_index.close
-        @line_index.close
-        @polygon_index.close
 
         puts "==========generator end at #{Time::now}=============="
-        
         return @vct
     end
 end
