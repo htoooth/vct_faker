@@ -51,15 +51,15 @@ class VctGenerator
             feat = @current_layer.create_feature(polygon,attribute)
 
             # each polygon point count
-            point_count = 0
-            line_index=[]
-            i.eachLineId do |l|
-                line_index << @vctfake.lines.index do |e| 
-                    e.objectid == l.to_i.abs
-                end
-                line_index.each { |e| point_count += @vctfake.lines[e].size }
-            end
-            @polygon_index.write "#{i.objectid} #{point_count}"
+            # point_count = 0
+            # line_index=[]
+            # i.eachLineId do |l|
+            #     line_index << @vctfake.lines.index do |e| 
+            #         e.objectid == l.to_i.abs
+            #     end
+            #     line_index.each { |e| point_count += @vctfake.lines[e].size }
+            # end
+            # @polygon_index.write "#{i.objectid} #{point_count}"
 
         end
         @polygon_index.close

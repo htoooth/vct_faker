@@ -32,6 +32,9 @@ The vctdataset includes data structures of vct dataset.
 
 The algorithm decide how to convert a vct dataset to a file.
 
+Size Calculate
+==============
+`size = 500 => file size = 250M, time = 8 minutes, total = 16 minutes.`
 
 About
 =====

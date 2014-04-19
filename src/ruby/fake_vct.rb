@@ -81,6 +81,18 @@ opt_parser = OptionParser.new do |opt|
     options[:max] = a
   end
 
+  opt.on('-c','--compute SIZE',Integer,"compute number of point, line and polygon") do |size|
+    pointNum = size ** 2
+    lineNum = 2 * size ** 2 - 2*size
+    polygonNum = (size - 1) ** 2
+
+    puts "Generate geometrys:"
+    puts "Point  :#{pointNum}"
+    puts "Line   :#{lineNum}"
+    puts "Polygon:#{polygonNum}"
+    exit
+  end
+
   opt.on("-h","--help","help") do
     puts opt_parser
     exit
