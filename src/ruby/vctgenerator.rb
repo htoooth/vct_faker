@@ -16,15 +16,18 @@ class VctGenerator
     end
 
     def point
+        puts "#{@vct.name} generate points."
         @vctfake.points.each do |i|
             @current_layer = @vct.create_layer("Point",@vctfake.table_define.clone) if yield(i)
             point = FPoint.new(i.objectid,@current_layer.id,@current_layer.name,i)
             attribute = Attribute.new(i.objectid,@current_layer.id,@vctfake.attribute_value)
             feat = @current_layer.create_feature(point,attribute)
         end
+        puts "points done."
     end
 
     def line
+        puts "#{@vct.name} generate lines."
         @vctfake.lines.each do |i|
             @current_layer = @vct.create_layer("Line",@vctfake.table_define.clone) if yield(i)
             line = FLine.new(i.objectid,@current_layer.id,@current_layer.name,i)
@@ -33,9 +36,11 @@ class VctGenerator
 
             @line_index.write "#{i.objectid} #{i.size}"
         end
+        puts 'lines done.'
     end
 
     def polygon
+        puts "#{@vct.name} generate polygons."
         @vctfake.polygons.each do |i|
             @current_layer = @vct.create_layer("Polygon",@vctfake.table_define.clone) if yield(i)
             polygon = FPolygon.new(i.objectid,@current_layer.id,@current_layer.name,i)
@@ -53,6 +58,7 @@ class VctGenerator
             @polygon_index.write "#{i.objectid} #{point_count}"
 
         end
+        puts 'polygons done.'
     end
 
     def generate()

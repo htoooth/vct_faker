@@ -16,6 +16,11 @@ class VctCreator
         @lines=    []
         @polygons= []
         @linerange = linerange
+
+        puts "This work create geometry:"
+        puts "Point num is #{@pointNum}."
+        puts "Line num is #{@lineNum}."
+        puts "Polygon num is #{@polygonNum}."
     end
 
     def getLineMax()
@@ -125,6 +130,7 @@ HERE
     end
 
     def fake_point
+        puts "start fake point."
         (1..@pointNum).each do |p|
             objectid = p
             i = (p - 1) / @n
@@ -133,9 +139,11 @@ HERE
             point.objectid = objectid
             @points << point
         end
+        puts "end fake point."
     end
 
     def fake_line
+        puts "start fake line."
         id = @pointNum
         (1..@lineNum).each do |l|
             objectid = id + l
@@ -145,9 +153,11 @@ HERE
             line.objectid = objectid
             @lines << line
         end
+        puts "end fake line."
     end
 
     def fake_polygon
+        puts "start fake polygon."
         id = @pointNum + @lineNum
         (1..@polygonNum).each do |k|
             objectid = id +k
@@ -165,7 +175,8 @@ HERE
             polygon.objectid = objectid
 
             @polygons << polygon
-       end
+        end
+        puts "end fake polygon."
     end
 
     def fake
@@ -175,6 +186,7 @@ HERE
        fake_line()
        fake_polygon()
        fake_attribute()
+       puts "creator's work is done."
     end
 
 end
