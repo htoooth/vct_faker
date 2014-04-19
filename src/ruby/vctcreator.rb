@@ -17,8 +17,7 @@ class VctCreator
         @polygons= []
         @linerange = linerange
 
-        puts '=========creator start==========='
-        puts '================================='
+        puts "=========creator start at #{Time::now}==========="
         puts "This work create geometry:"
         puts "Point num is #{@pointNum}."
         puts "Line num is #{@lineNum}."
@@ -190,7 +189,7 @@ HERE
        fake_polygon()
        fake_attribute()
        puts "creator's work is done."
-       puts '==========creator end=============='
+       puts "==========creator end at #{Time::now}=============="
     end
 
 end

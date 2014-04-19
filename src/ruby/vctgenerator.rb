@@ -10,7 +10,7 @@ class VctGenerator
 
         @feature_count = @vctfake.points.size + @vctfake.lines.size + @vctfake.polygons.size
 
-        puts "==========generator start=============="
+        puts "==========generator start at #{Time::now}=============="
     end
 
     def head
@@ -72,7 +72,7 @@ class VctGenerator
         @line_index.close
         @polygon_index.close
 
-         puts "==========generator end=============="
+         puts "==========generator end at #{Time::now}=============="
         
         return @vct
     end

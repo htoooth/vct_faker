@@ -16,7 +16,7 @@ def main(opt)
     fci = opt[:fci]
     linerange = (opt[:min]..opt[:max])
 
-    puts "::::fake_vct -s #{size} -t #{name} -e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}"
+    puts "::fake_vct -s #{size} -t #{name} -e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}::"
 
     vct_fake = VctCreator.new(size.to_i,linerange)
     vct_fake.fake()
@@ -28,12 +28,14 @@ def main(opt)
 
     efc = EfcDatasetGenerator.new(vct_fake,efc_index,efc)
     efc_ds = efc.generate()
+
     vct_file_efc = create_file(efc_name)
     dataset2file(efc_ds,vct_file_efc)
     vct_file_efc.close
 
     fci = FciDatasetGenerator.new(vct_fake,fci_index,fci)
     fci_ds = fci.generate()
+
     vct_file_fci = create_file(fci_name)
     dataset2file(fci_ds,vct_file_fci)
     vct_file_fci.close

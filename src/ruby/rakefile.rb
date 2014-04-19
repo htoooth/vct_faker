@@ -8,7 +8,7 @@ CLEAN.include('*.polygon')
 
 desc "generate task"
 task :generate do
-    (10..11).each do |i|
+    (100...101).each do |i|
        system  "ruby fake_vct.rb -s #{i} -t TEST#{i}"
     end
 end
