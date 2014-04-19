@@ -60,6 +60,8 @@ class VctGenerator
             #     line_index.each { |e| point_count += @vctfake.lines[e].size }
             # end
             # @polygon_index.write "#{i.objectid} #{point_count}"
+            # 
+            @polygon_index.write "#{i.objectid} #{i.to_s}"
 
         end
         @polygon_index.close
