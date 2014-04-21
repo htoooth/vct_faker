@@ -1,3 +1,5 @@
+require_relative 'vctgeometry'
+
 class VctCreator
     attr_accessor :points,:lines,:polygons
     attr_accessor :table_define
@@ -73,24 +75,7 @@ HERE
         return pstart,pend
     end
 
-    def generateLinePoint(s,e,n)
-        line = Line.new()
-        width = (e.x-s.x).to_f/(n+1)
-        heigh = (e.y-s.y).to_f/(n+1)
-
-        line.add(s)
-
-        n.times do |n|
-            point = Point.new(s.x + width*(n+1),s.y + heigh*(n+1))
-            line.add(point)
-        end
-
-        line.add(e)
-
-        return line
-    end
-
-   def fake_table_structure
+    def fake_table_structure
 
         t = <<HERE
 BSM,Integer,10
@@ -151,7 +136,7 @@ HERE
             objectid = id + l
             pointNum = rand(@linerange)
             start_point,end_point = calculate_line_point(l)
-            line = generateLinePoint(start_point,end_point,pointNum)
+            line = Line.new(start_point,end_point,pointNum)
             line.objectid = objectid
             @lines << line
         end

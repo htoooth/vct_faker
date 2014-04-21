@@ -18,4 +18,9 @@ task :t2000 do
     system 'ruby fake_vct.rb -s 2000 -t test1000 -e 100000 -f 10000000 -i 20 -a 200'
 end
 
-task :default => :generate
+desc "test 500"
+task :test do
+     system 'ruby fake_vct.rb -s 500'
+end
+
+task :default => :test

@@ -42,22 +42,6 @@ class Table
     end
 end
 
-class Point
-    attr_accessor :objectid,:x,:y
-    def initialize(x,y)
-        @x=x
-        @y=y
-    end
-
-    def size
-        1
-    end
-
-    def to_s
-        "#{@x},#{@y}"
-    end
-end
-
 class FPoint
     @@template = <<HERE
 %<objectid>d
@@ -85,26 +69,6 @@ HERE
         sprintf(@@template,@attribute)
     end
 
-end
-
-
-class Line
-    attr_accessor :objectid
-    def initialize
-        @points = []
-    end
-
-    def add(p)
-        @points << p
-    end
-
-    def size
-        @points.size
-    end
-
-    def to_s
-        @points.join("\n")
-    end
 end
 
 class FLine
@@ -136,29 +100,6 @@ HERE
         sprintf(@@template,@attr)
     end
 
-end
-
-class Polygon
-    attr_accessor :objectid
-    def initialize
-        @lineid = []
-    end
-
-    def add(l)
-        @lineid << l
-    end
-
-    def eachLineId
-        @lineid.each { |e| yield(e) }
-    end
-
-    def size
-        @lineid.size
-    end
-
-    def to_s
-        @lineid.join(",") 
-    end
 end
 
 class FPolygon
