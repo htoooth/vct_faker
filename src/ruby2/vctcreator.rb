@@ -9,6 +9,7 @@ class VctCreator
         @lineNum =  2 * size ** 2 - 2*size
         @polygonNum = (size - 1) ** 2
         @n = size
+        @feature_count = @pointNum + @lineNum + @polygonNum
 
         @srs = nil
         @attribute_value = []
@@ -31,6 +32,14 @@ class VctCreator
 
     def getLinMin()
         @linerange.begin
+    end
+
+    def getCount
+        @feature_count
+    end
+
+    def getPointCount
+        @pointNum
     end
     
     def fake_head

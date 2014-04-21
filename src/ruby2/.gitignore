@@ -1,2 +1,5 @@
 *.VCT
 *.part
+*.point
+*.line
+*.polygon

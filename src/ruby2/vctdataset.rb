@@ -190,10 +190,10 @@ class VctDataset
                    :id   => '100',
                    :table=> 'table'}
         @layercode = 0
-        @file = VctFile.new()
+        @file = VctFile.new(@name)
     end
 
-    def srs(str)
+    def setSrs(str)
         @file.write_head(str)
     end
 
@@ -203,7 +203,8 @@ class VctDataset
                           @prefix[:name] + @layercode.to_s,
                           type,
                           @prefix[:table] + @layercode.to_s,
-                          tabledefn)
+                          tabledefn,
+                          @file)
         @layers << layer
 
         write_layer(layer)

@@ -7,7 +7,7 @@ class VctGenerator
         @line_index = IndexFile.new("#{name}.line")
         @polygon_index = IndexFile.new("#{name}.polygon")
 
-        @feature_count = @vctfake.points.size + @vctfake.lines.size + @vctfake.polygons.size
+        @feature_count = @vctfake.getCount
 
         @buff_feature = []
         @buff_size = 10
@@ -16,7 +16,7 @@ class VctGenerator
     end
 
     def head
-        @vct.srs = @vctfake.srs
+        @vct.setSrs(@vctfake.srs)
     end
 
     def point
@@ -24,9 +24,9 @@ class VctGenerator
         current_layer = nil
         @vctfake.each_point do |i|
             if yield(i)
-                @vct.file.point.write_table_end() if current_layer != nil
+                @vct.file.point.attribute.write_table_end() if current_layer != nil
                 current_layer = @vct.create_layer("Point",@vctfake.table_define.clone)
-                @vct.file.point.write_table_name(current_layer.table)
+                @vct.file.point.attribute.write_table_name(current_layer.table)
             end
             current_layer = @vct.create_layer("Point",@vctfake.table_define.clone) if yield(i)
             point = FPoint.new(i.objectid,current_layer.id,current_layer.name,i)
@@ -39,7 +39,7 @@ class VctGenerator
                 @buff_feature.clear
             end
         end
-        @vct.file.line.write_table_end()
+        @vct.file.point.attribute.write_table_end()
         puts "points done."
     end
 
@@ -49,9 +49,9 @@ class VctGenerator
         
         @vctfake.each_line do |i|
             if yield(i)
-                @vct.file.line.write_table_end() if current_layer != nil
+                @vct.file.line.attribute.write_table_end() if current_layer != nil
                 current_layer = @vct.create_layer("Line",@vctfake.table_define.clone)
-                @vct.file.line.write_table_name(current_layer.table)
+                @vct.file.line.attribute.write_table_name(current_layer.table)
             end
             line = FLine.new(i.objectid,current_layer.id,current_layer.name,i)
             attribute = Attribute.new(i.objectid,current_layer.id,@vctfake.attribute_value)
@@ -65,7 +65,7 @@ class VctGenerator
 
             @line_index.write "#{i.objectid} #{i.size}"
         end
-        @vct.file.line.write_table_end()
+        @vct.file.line.attribute.write_table_end()
 
         @line_index.close
         puts 'lines done.'
@@ -77,9 +77,9 @@ class VctGenerator
 
         @vctfake.each_polygon do |i|
             if yield(i)
-                @vct.file.polygon.write_table_end() if current_layer != nil
+                @vct.file.polygon.attribute.write_table_end() if current_layer != nil
                 current_layer = @vct.create_layer("Polygon",@vctfake.table_define.clone)
-                @vct.file.polygon.write_table_name(current_layer.table) 
+                @vct.file.polygon.attribute.write_table_name(current_layer.table) 
             end
             polygon = FPolygon.new(i.objectid,current_layer.id,current_layer.name,i)
             attribute = Attribute.new(i.objectid ,current_layer.id,@vctfake.attribute_value)
@@ -94,14 +94,14 @@ class VctGenerator
             @polygon_index.write "#{i.objectid} #{i.to_s}"
 
         end
-        @vct.file.polygon.write_table_end()
+        @vct.file.polygon.attribute.write_table_end()
 
         @polygon_index.close
         puts "polygons done at #{Time::now}"
     end
 
     def generate()
-        @point_index.write "point_count #{@vctfake.points.size}"
+        @point_index.write "point_count #{@vctfake.getPointCount}"
         @point_index.write "feature_count #{@feature_count}"
         @point_index.write "task_count #{@vct.getLayerSize}"
         @point_index.close

@@ -120,6 +120,7 @@ class TablePart < VctPart
 end
 
 class PointPart < VctPart
+    attr_accessor :attribute
     def initialize
         super('z.point.geometry.part',:Point)
         @attribute = PointAttribute.new()
@@ -135,6 +136,7 @@ class PointPart < VctPart
 end
 
 class LinePart < VctPart
+    attr_accessor :attribute
     def initialize
         super('z.line.geometry.part',:Line)
         @attribute = LineAttribute.new()
@@ -150,6 +152,7 @@ class LinePart < VctPart
 end
 
 class PolygonPart < VctPart
+    attr_accessor :attribute
     def initialize
         super('z.polygon.geometry.part',:Polygon)
         @attribute = PolygonAttribute.new()
