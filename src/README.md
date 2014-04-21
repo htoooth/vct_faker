@@ -10,6 +10,7 @@ I want to realize my programming language so there are some languages that must 
 * [coffeescript](http://coffeescript.org/)
 * [c++](http://www.cplusplus.com/)
 * [c#](http://msdn.microsoft.com/en-us/library/z1zx9t92.aspx)
+* [elixir](http://elixir-lang.org)
 * [erlang](http://www.erlang.org/)
 * [f#](http://fsharp.org/)
 * [go](http://golang.org/)
