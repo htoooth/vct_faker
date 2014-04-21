@@ -142,7 +142,7 @@ class Attribute
     end
 
     def to_s
-        "#{@objectid},#{@layerid},#{@other.join(',')}"
+        "#{@objectid},#{@layerid},#{@other.join(',')}\n"
     end
 end
 

@@ -127,6 +127,15 @@ class PointPart < VctPart
     end
 
     def write_feature(feats)
+        buff_geo = ''
+        buff_attri = ''
+        feats.each do |i|
+            buff_geo += i.geometry.to_s
+            buff_attri += i.attribute.to_s
+        end
+
+        @file.write(buff_geo)
+        @attribute.write(buff_attri)
     end
 
     def close
@@ -143,6 +152,15 @@ class LinePart < VctPart
     end
 
     def write_feature(feats)
+        buff_geo = ''
+        buff_attri = ''
+        feats.each do |i|
+            buff_geo += i.geometry.to_s
+            buff_attri += i.attribute.to_s
+        end
+
+        @file.write(buff_geo)
+        @attribute.write(buff_attri)
     end
 
     def close
@@ -159,6 +177,15 @@ class PolygonPart < VctPart
     end
 
     def write_feature(feats)
+        buff_geo = ''
+        buff_attri = ''
+        feats.each do |i|
+            buff_geo += i.geometry.to_s
+            buff_attri += i.attribute.to_s
+        end
+
+        @file.write(buff_geo)
+        @attribute.write(buff_attri)
     end
 
     def close
