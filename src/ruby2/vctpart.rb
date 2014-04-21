@@ -95,20 +95,37 @@ end
 class PointPart < VctPart
     def initialize
         super('Point.geometry.part',:Point)
+        @attribute = PointAttribute.new()
+    end
+
+    def close
+        super()
+        @attribute.close
     end
 end
 
 class LinePart < VctPart
     def initialize
         super('Line.geometry.part',:Line)
+        @attribute = LineAttribute.new()
+    end
+
+    def close
+        super()
+        @attribute.close
     end
 end
 
 class PolygonPart < VctPart
     def initialize
         super('Polygon.geometry.part',:Polygon)
+        @attribute = PolygonAttribute.new()
     end
 
+    def close
+        super()
+        @attribute.close
+    end
 end
 
 class AttributePart 
@@ -117,7 +134,7 @@ class AttributePart
     end
 
     def write(str)
-        @file.pust(str)
+        @file.puts(str)
     end
 
     def write_begin
@@ -133,15 +150,20 @@ class AttributePart
     def write_table_end
         write('End')
     end
+
+    def close
+        @file.close
+    end
 end
 
 class PointAttribute < AttributePart
     def initialize
         super('Point.attribute.part')
+        write_begin()
     end
 
     def write_begin
-        write(config[:attribute][:prefix][0])
+        write($config[:Attribute][:prefix][0])
     end
 
 end
@@ -158,8 +180,14 @@ class PolygonAttribute < AttributePart
     end
 
     def write_end
-        write(config[:attribute][:prefix][1])
+        write($config[:Attribute][:prefix][1])
+    end
+
+    def close
+        write_end()
+        super()
     end
 end
 
 vct = VctFile.new("a")
+vct.close
