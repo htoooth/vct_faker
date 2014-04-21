@@ -1,3 +1,5 @@
+require_relative 'vctpart'
+
 class FieldType
     attr_accessor :name,:type,:width,:precision
     def initialize(name,type,width,precision)
@@ -132,7 +134,6 @@ HERE
     end
 end
 
-
 class Attribute
     def initialize(objectid,layerid,other)
         @objectid = objectid
@@ -147,19 +148,18 @@ end
 
 class Layer
     attr_accessor :id,:name,:type,:table,:field,:feats;
-    def initialize(id,name,type,table,tabledefn)
+    def initialize(id,name,type,table,tabledefn,file)
         @id = id
         @name = name
         @type = type
         @table = table
         @field = tabledefn
         @field.name = table
-        @feats = []
+        @file = file
     end
 
     def create_feature(geo,attri)
         feat = VctFeature.new(geo.objectid,geo,attri)
-        @feats << feat
         return feat
     end
 
@@ -177,12 +177,12 @@ class VctFeature
     end
 
     def to_s
-        "id=:#{@id}\ngeometry=:\n#{@geometry}field=:#{@attribute}\n==="
+        "id=:#{@id}\ngeometry=:\n#{@geometry}field=:#{@attribute}\n"
     end
 end
 
 class VctDataset
-    attr_accessor :layers,:name,:srs
+    attr_accessor :layers,:name,:file
     def initialize(name)
         @name = name
         @layers = []
@@ -190,6 +190,11 @@ class VctDataset
                    :id   => '100',
                    :table=> 'table'}
         @layercode = 0
+        @file = VctFile.new()
+    end
+
+    def srs(str)
+        @file.write_head(str)
     end
 
     def create_layer(type,tabledefn)
@@ -200,11 +205,23 @@ class VctDataset
                           @prefix[:table] + @layercode.to_s,
                           tabledefn)
         @layers << layer
+
+        write_layer(layer)
+
         return layer
+    end
+
+    def write_layer(layer)
+        @file.write_featurecode(layer.to_s)
+        @file.write_table(layer.field.to_s)
     end
 
     def getLayerSize
         @layers.size
+    end
+
+    def close
+        @file.close
     end
 
     def to_s

@@ -17,13 +17,39 @@ $config = {
 }
 
 class VctFile 
-    def initialize(args)
+    attr_accessor :head,:featurecode,:table,:point,:line,:polygon
+    def initialize(name)
+        @name = name
         @head = HeadPart.new() 
         @featurecode =  LayerPart.new()
         @table = TablePart.new()
         @point = PointPart.new()
         @line = LinePart.new()
         @polygon = PolygonPart.new()
+    end
+
+    def write_head(str)
+        @head.write(str)
+    end
+
+    def write_featurecode(str)
+        @featurecode.write(str)
+    end
+
+    def write_table(str)
+        @table.write(str)
+    end
+
+    def write_point(feats)
+        @point.write_feature(feat)
+    end
+
+    def write_line(feats)
+        @line.write_feature(feats)
+    end
+
+    def write_polygon(feats)
+        @polygon.write_feature(feats)
     end
 
     def close
@@ -76,26 +102,30 @@ end
 
 class HeadPart < VctPart
     def initialize
-        super('Head.part',:Head)
+        super('z.head.part',:Head)
     end
 end
 
 class LayerPart < VctPart
     def initialize
-        super('FeatureCode.part',:FeatureCode)
+        super('z.featureCode.part',:FeatureCode)
     end
 end
 
 class TablePart < VctPart
     def initialize
-        super('Table.part',:Table)
+        super('z.table.part',:Table)
     end
+
 end
 
 class PointPart < VctPart
     def initialize
-        super('Point.geometry.part',:Point)
+        super('z.point.geometry.part',:Point)
         @attribute = PointAttribute.new()
+    end
+
+    def write_feature(feats)
     end
 
     def close
@@ -106,8 +136,11 @@ end
 
 class LinePart < VctPart
     def initialize
-        super('Line.geometry.part',:Line)
+        super('z.line.geometry.part',:Line)
         @attribute = LineAttribute.new()
+    end
+
+    def write_feature(feats)
     end
 
     def close
@@ -118,8 +151,11 @@ end
 
 class PolygonPart < VctPart
     def initialize
-        super('Polygon.geometry.part',:Polygon)
+        super('z.polygon.geometry.part',:Polygon)
         @attribute = PolygonAttribute.new()
+    end
+
+    def write_feature(feats)
     end
 
     def close
@@ -128,7 +164,7 @@ class PolygonPart < VctPart
     end
 end
 
-class AttributePart 
+class AttributePart
     def initialize(name)
         @file = File.new(name,'w')
     end
@@ -148,7 +184,7 @@ class AttributePart
     end
 
     def write_table_end
-        write('End')
+        write('TableEnd')
     end
 
     def close
@@ -158,7 +194,7 @@ end
 
 class PointAttribute < AttributePart
     def initialize
-        super('Point.attribute.part')
+        super('z.point.attribute.part')
         write_begin()
     end
 
@@ -170,13 +206,13 @@ end
 
 class LineAttribute < AttributePart
     def initialize
-        super('Line.attribute.part')
+        super('z.line.attribute.part')
     end
 end
 
 class PolygonAttribute < AttributePart
     def initialize
-        super('Polygon.attribute.part')
+        super('z.polygon.attribute.part')
     end
 
     def write_end
@@ -188,6 +224,3 @@ class PolygonAttribute < AttributePart
         super()
     end
 end
-
-vct = VctFile.new("a")
-vct.close

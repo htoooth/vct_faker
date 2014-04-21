@@ -5,7 +5,7 @@ CLEAN.include('*.part')
 
 desc "test"
 task :test do
-     system 'ruby vctpart.rb'
+     system 'ruby fake_vct.rb'
 end
 
 task :default => :test
