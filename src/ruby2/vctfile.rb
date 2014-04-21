@@ -149,3 +149,11 @@ def dataset2file(vctds,vctfile)
         end
     end
 end
+
+class VctFile
+    def initialize(name)
+
+    end
+end
+
+class Vct
