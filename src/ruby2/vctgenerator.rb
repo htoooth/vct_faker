@@ -10,7 +10,7 @@ class VctGenerator
         @feature_count = @vctfake.getCount
 
         @buff_feature = []
-        @buff_size = 10
+        @buff_size = 100
 
         puts "==========generator start at #{Time::now}=============="
     end

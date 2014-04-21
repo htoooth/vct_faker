@@ -108,13 +108,13 @@ end
 
 class LayerPart < VctPart
     def initialize
-        super('z.featureCode.part',:FeatureCode)
+        super("z.#{@name}.featureCode.part",:FeatureCode)
     end
 end
 
 class TablePart < VctPart
     def initialize
-        super('z.table.part',:Table)
+        super("z.#{@name}.table.part",:Table)
     end
 
 end
@@ -122,7 +122,7 @@ end
 class PointPart < VctPart
     attr_accessor :attribute
     def initialize
-        super('z.point.geometry.part',:Point)
+        super("z.#{@name}.point.geometry.part",:Point)
         @attribute = PointAttribute.new()
     end
 
@@ -147,7 +147,7 @@ end
 class LinePart < VctPart
     attr_accessor :attribute
     def initialize
-        super('z.line.geometry.part',:Line)
+        super("z.#{@name}.line.geometry.part",:Line)
         @attribute = LineAttribute.new()
     end
 
@@ -172,7 +172,7 @@ end
 class PolygonPart < VctPart
     attr_accessor :attribute
     def initialize
-        super('z.polygon.geometry.part',:Polygon)
+        super("z.#{@name}.polygon.geometry.part",:Polygon)
         @attribute = PolygonAttribute.new()
     end
 
@@ -224,7 +224,7 @@ end
 
 class PointAttribute < AttributePart
     def initialize
-        super('z.point.attribute.part')
+        super("z.#{@name}.point.attribute.part")
         write_begin()
     end
 
@@ -236,13 +236,13 @@ end
 
 class LineAttribute < AttributePart
     def initialize
-        super('z.line.attribute.part')
+        super("z.#{@name}.line.attribute.part")
     end
 end
 
 class PolygonAttribute < AttributePart
     def initialize
-        super('z.polygon.attribute.part')
+        super("z.#{@name}.polygon.attribute.part")
     end
 
     def write_end
