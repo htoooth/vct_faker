@@ -22,6 +22,7 @@ class VctGenerator
     def point
         puts "#{@vct.name} generate points."
         current_layer = nil
+        
         @vctfake.each_point do |i|
             if yield(i)
                 @vct.file.point.attribute.write_table_end() if current_layer != nil
@@ -75,6 +76,7 @@ class VctGenerator
         puts "#{@vct.name} generate polygons at #{Time::now}."
         current_layer = nil
 
+        s = 0
         @vctfake.each_polygon do |i|
             if yield(i)
                 @vct.file.polygon.attribute.write_table_end() if current_layer != nil
