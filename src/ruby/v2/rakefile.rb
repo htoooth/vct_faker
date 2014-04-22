@@ -44,4 +44,11 @@ task :test do
      merge_file(:t2)
 end
 
+desc "test 2000"
+task :t2000 do
+     sh "ruby fake_vct.rb -s 2000 -o t1 -t t2"
+     merge_file(:t1)
+     merge_file(:t2)
+end
+
 task :default => :test

@@ -45,7 +45,7 @@ class Line
 end
 
 class Polygon
-    attr_accessor :objectid
+    attr_accessor :objectid,:size
     def initialize
         @lineid = []
     end

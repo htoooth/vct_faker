@@ -74,7 +74,7 @@ class VctGenerator
             attribute = Attribute.new(i.objectid ,current_layer.id,@vctfake.attribute_value)
             feat = current_layer.create_feature(polygon,attribute){|feats| @vct.file.polygon.write_feature(feats)}
 
-            @polygon_index.write "#{i.objectid} #{i.to_s}"
+            @polygon_index.write "#{i.objectid} #{i.size}"
         end
 
         current_layer.close()
@@ -191,6 +191,7 @@ class FciDatasetGenerator < VctGenerator
         super do |i|
             point_count = 0
             i.eachLineId{|i| point_count += @line[i.to_i.abs]}
+            i.size = point_count
             b = if (sore == 0) or (sore >= @fci)
                 sore = 0
                 true
