@@ -46,7 +46,7 @@ end
 
 desc "test 2000"
 task :t2000 do
-     sh "ruby fake_vct.rb -s 2000 -o t1 -t t2"
+     sh "ruby fake_vct.rb -s 2000 -o t1 -t t2 -e 500000 -f 50000000  -i 20 -a 200"
      merge_file(:t1)
      merge_file(:t2)
 end
