@@ -174,8 +174,8 @@ class FciDatasetGenerator < VctGenerator
         super do |i|
             @line[i.objectid] = i.size
             b = if (sore == 0) or (sore >= @fci)
-                true
                 sore = 0
+                true
             else
                 false
             end
@@ -192,14 +192,12 @@ class FciDatasetGenerator < VctGenerator
             point_count = 0
             i.eachLineId{|i| point_count += @line[i.to_i.abs]}
             b = if (sore == 0) or (sore >= @fci)
-                true
                 sore = 0
+                true
             else
                 false
             end
-
             sore += point_count
-
             b
         end
     end
