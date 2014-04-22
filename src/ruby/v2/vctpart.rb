@@ -1,22 +1,15 @@
-head_template =''
-feature_template = ''
-table_template = ''
-point_template = ''
-line_template = ''
-polygon_template = ''
-attribute_template = ''
 
 $config = {
-    :Head        => {:prefix => ['HeadBegin','HeadEnd'],:template =>head_template },
-    :FeatureCode => {:prefix => ['FeatureCodeBegin','FeatureCodeEnd'],:template => feature_template},
-    :Table       => {:prefix => ['TableBegin','TableEnd'], :template => table_template},
-    :Point       => {:prefix => ['PointBegin','PointEnd'], :template =>point_template},
-    :Line        => {:prefix => ['LineBegin','LineEnd'],   :template =>line_template},
-    :Polygon     => {:prefix => ['PolygonBegin','PolygonEnd', :template =>polygon_template]},
-    :Attribute   => {:prefix => ['AttributeBegin','AttributeEnd'], :template => attribute_template}
+    :Head        => {:prefix => ['HeadBegin','HeadEnd']},
+    :FeatureCode => {:prefix => ['FeatureCodeBegin','FeatureCodeEnd']},
+    :Table       => {:prefix => ['TableBegin','TableEnd']},
+    :Point       => {:prefix => ['PointBegin','PointEnd']},
+    :Line        => {:prefix => ['LineBegin','LineEnd']},
+    :Polygon     => {:prefix => ['PolygonBegin','PolygonEnd']},
+    :Attribute   => {:prefix => ['AttributeBegin','AttributeEnd']}
 }
 
-class VctFile 
+class VctFile
     attr_accessor :head,:featurecode,:table,:point,:line,:polygon
     def initialize(name)
         @name = name
@@ -53,12 +46,33 @@ class VctFile
     end
 
     def close
-        @head.close
-        @featurecode.close
-        @table.close
+        close_featurecode()
+        close_table()
+        puts "=========Time::now==========="
+    end
+
+    def close_point
         @point.close
+    end
+
+    def close_line
         @line.close
+    end
+
+    def close_polygon
         @polygon.close
+    end
+
+    def close_head
+        @head.close
+    end
+
+    def close_featurecode
+        @featurecode.close
+    end
+
+    def close_table
+        @table.close
     end
 end
 
@@ -138,6 +152,10 @@ class PointPart < VctPart
         @attribute.write(buff_attri)
     end
 
+    def write_frush(feats)
+        write_feature(feats)
+    end
+
     def close
         super()
         @attribute.close
@@ -163,6 +181,10 @@ class LinePart < VctPart
         @attribute.write(buff_attri)
     end
 
+    def write_frush(feats)
+        write_feature(feats)
+    end
+
     def close
         super()
         @attribute.close
@@ -186,6 +208,10 @@ class PolygonPart < VctPart
 
         @file.write(buff_geo)
         @attribute.write(buff_attri)
+    end
+
+    def write_frush(feats)
+        write_feature(feats)
     end
 
     def close

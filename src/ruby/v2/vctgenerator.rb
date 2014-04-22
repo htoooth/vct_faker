@@ -16,6 +16,7 @@ class VctGenerator
 
     def head
         @vct.setSrs(@vctfake.srs)
+        @vct.file.close_head
     end
 
     def point
@@ -38,7 +39,12 @@ class VctGenerator
                 @buff_feature.clear
             end
         end
+
+        # add last feature if buff_feaure have features
+        @vct.file.point.write_frush(@buff_feature)
+        @buff_feature.clear
         @vct.file.point.attribute.write_table_end()
+        @vct.file.close_point
     end
 
     def line
@@ -62,8 +68,11 @@ class VctGenerator
 
             @line_index.write "#{i.objectid} #{i.size}"
         end
-        @vct.file.line.attribute.write_table_end()
 
+        @vct.file.line.write_frush(@buff_feature)
+        @buff_feature.clear
+        @vct.file.line.attribute.write_table_end()
+        @vct.file.close_line
         @line_index.close
     end
 
@@ -89,8 +98,11 @@ class VctGenerator
             @polygon_index.write "#{i.objectid} #{i.to_s}"
 
         end
-        @vct.file.polygon.attribute.write_table_end()
 
+        @vct.file.polygon.write_frush(@buff_feature)
+        @buff_feature.clear
+        @vct.file.polygon.attribute.write_table_end()
+        @vct.file.close_polygon
         @polygon_index.close
     end
 
