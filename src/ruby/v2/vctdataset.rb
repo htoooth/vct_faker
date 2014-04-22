@@ -1,4 +1,4 @@
-require_relative 'vctpart'
+require_relative 'vctfile'
 
 class FieldType
     attr_accessor :name,:type,:width,:precision
