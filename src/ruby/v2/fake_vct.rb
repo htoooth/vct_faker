@@ -48,11 +48,11 @@ opt_parser = OptionParser.new do |opt|
     options[:size] = size
   end
 
-  opt.on('-o',"--t_efc EFC_FILE_NAME","one generate efc file name") do |target|
+  opt.on('-o',"--t_efc EFC_FILE_NAME","efc file name") do |target|
     options[:target_efc] = target
   end
 
-  opt.on('-t',"--t_fci FCI_FILE_NAME","two generate fci file name") do |target|
+  opt.on('-t',"--t_fci FCI_FILE_NAME","fci file name") do |target|
     options[:target_fci] = target
   end
 

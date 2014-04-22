@@ -1,12 +1,12 @@
 
 $config = {
-    :Head        => {:prefix => ['HeadBegin','HeadEnd']},
-    :FeatureCode => {:prefix => ['FeatureCodeBegin','FeatureCodeEnd']},
-    :Table       => {:prefix => ['TableBegin','TableEnd']},
-    :Point       => {:prefix => ['PointBegin','PointEnd']},
-    :Line        => {:prefix => ['LineBegin','LineEnd']},
-    :Polygon     => {:prefix => ['PolygonBegin','PolygonEnd']},
-    :Attribute   => {:prefix => ['AttributeBegin','AttributeEnd']}
+    :Head        => {:prefix => ['HeadBegin',"HeadEnd"]},
+    :FeatureCode => {:prefix => ['FeatureCodeBegin',"FeatureCodeEnd"]},
+    :Table       => {:prefix => ['TableBegin',"TableEnd"]},
+    :Point       => {:prefix => ['PointBegin',"PointEnd"]},
+    :Line        => {:prefix => ['LineBegin',"LineEnd"]},
+    :Polygon     => {:prefix => ['PolygonBegin',"PolygonEnd"]},
+    :Attribute   => {:prefix => ['AttributeBegin',"AttributeEnd"]}
 }
 
 class VctFile
@@ -94,6 +94,7 @@ class VctPart
 
     def end_str
         write(getEnd(@key))
+        write("\n")
     end
 
     def close
