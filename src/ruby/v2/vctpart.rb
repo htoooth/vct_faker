@@ -20,12 +20,12 @@ class VctFile
     attr_accessor :head,:featurecode,:table,:point,:line,:polygon
     def initialize(name)
         @name = name
-        @head = HeadPart.new() 
-        @featurecode =  LayerPart.new()
-        @table = TablePart.new()
-        @point = PointPart.new()
-        @line = LinePart.new()
-        @polygon = PolygonPart.new()
+        @head = HeadPart.new(@name) 
+        @featurecode =  LayerPart.new(@name)
+        @table = TablePart.new(@name)
+        @point = PointPart.new(@name)
+        @line = LinePart.new(@name)
+        @polygon = PolygonPart.new(@name)
     end
 
     def write_head(str)
@@ -101,29 +101,29 @@ class VctPart
 end
 
 class HeadPart < VctPart
-    def initialize
-        super('z.head.part',:Head)
+    def initialize(name)
+        super("z.#{name}head.part",:Head)
     end
 end
 
 class LayerPart < VctPart
-    def initialize
-        super("z.#{@name}.featureCode.part",:FeatureCode)
+    def initialize(name)
+        super("z.#{name}.featureCode.part",:FeatureCode)
     end
 end
 
 class TablePart < VctPart
-    def initialize
-        super("z.#{@name}.table.part",:Table)
+    def initialize(name)
+        super("z.#{name}.table.part",:Table)
     end
 
 end
 
 class PointPart < VctPart
     attr_accessor :attribute
-    def initialize
-        super("z.#{@name}.point.geometry.part",:Point)
-        @attribute = PointAttribute.new()
+    def initialize(name)
+        super("z.#{name}.point.geometry.part",:Point)
+        @attribute = PointAttribute.new(name)
     end
 
     def write_feature(feats)
@@ -146,9 +146,9 @@ end
 
 class LinePart < VctPart
     attr_accessor :attribute
-    def initialize
-        super("z.#{@name}.line.geometry.part",:Line)
-        @attribute = LineAttribute.new()
+    def initialize(name)
+        super("z.#{name}.line.geometry.part",:Line)
+        @attribute = LineAttribute.new(name)
     end
 
     def write_feature(feats)
@@ -171,9 +171,9 @@ end
 
 class PolygonPart < VctPart
     attr_accessor :attribute
-    def initialize
-        super("z.#{@name}.polygon.geometry.part",:Polygon)
-        @attribute = PolygonAttribute.new()
+    def initialize(name)
+        super("z.#{name}.polygon.geometry.part",:Polygon)
+        @attribute = PolygonAttribute.new(name)
     end
 
     def write_feature(feats)
@@ -223,8 +223,8 @@ class AttributePart
 end
 
 class PointAttribute < AttributePart
-    def initialize
-        super("z.#{@name}.point.attribute.part")
+    def initialize(name)
+        super("z.#{name}.point.attribute.part")
         write_begin()
     end
 
@@ -235,14 +235,14 @@ class PointAttribute < AttributePart
 end
 
 class LineAttribute < AttributePart
-    def initialize
-        super("z.#{@name}.line.attribute.part")
+    def initialize(name)
+        super("z.#{name}.line.attribute.part")
     end
 end
 
 class PolygonAttribute < AttributePart
-    def initialize
-        super("z.#{@name}.polygon.attribute.part")
+    def initialize(name)
+        super("z.#{name}.polygon.attribute.part")
     end
 
     def write_end

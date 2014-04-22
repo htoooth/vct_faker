@@ -12,7 +12,6 @@ class VctGenerator
         @buff_feature = []
         @buff_size = 100
 
-        puts "==========generator start at #{Time::now}=============="
     end
 
     def head
@@ -20,7 +19,6 @@ class VctGenerator
     end
 
     def point
-        puts "#{@vct.name} generate points."
         current_layer = nil
 
         @vctfake.each_point do |i|
@@ -41,11 +39,9 @@ class VctGenerator
             end
         end
         @vct.file.point.attribute.write_table_end()
-        puts "points done."
     end
 
     def line
-        puts "#{@vct.name} generate lines."
         current_layer = nil
         
         @vctfake.each_line do |i|
@@ -69,11 +65,9 @@ class VctGenerator
         @vct.file.line.attribute.write_table_end()
 
         @line_index.close
-        puts 'lines done.'
     end
 
     def polygon
-        puts "#{@vct.name} generate polygons at #{Time::now}."
         current_layer = nil
 
         @vctfake.each_polygon do |i|
@@ -98,7 +92,6 @@ class VctGenerator
         @vct.file.polygon.attribute.write_table_end()
 
         @polygon_index.close
-        puts "polygons done at #{Time::now}"
     end
 
     def generate()
@@ -107,7 +100,6 @@ class VctGenerator
         @point_index.write "task_count #{@vct.getLayerSize}"
         @point_index.close
 
-        puts "==========generator end at #{Time::now}=============="
         return @vct
     end
 end

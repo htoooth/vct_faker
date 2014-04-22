@@ -171,6 +171,7 @@ HERE
             yield(polygon)
         end
         puts "end fake polygon."
+        puts "========#{Time::now}=============="
     end
 
     def fake_begin
