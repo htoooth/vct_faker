@@ -1,5 +1,5 @@
 require_relative "vctdataset"
-require_relative "vctpart"
+require_relative "vctfile"
 require_relative "vctcreator"
 require_relative "vctgenerator"
 
