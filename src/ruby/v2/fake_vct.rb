@@ -18,9 +18,9 @@ def main(opt)
 
     vct_fake = VctCreator.new(size.to_i,linerange)
 
-    # efc = EfcDatasetGenerator.new(vct_fake,efc_name,efc)
-    # efc_ds = efc.generate()
-    # efc_ds.close
+    efc = EfcDatasetGenerator.new(vct_fake,efc_name,efc)
+    efc_ds = efc.generate()
+    efc_ds.close
 
     fci = FciDatasetGenerator.new(vct_fake,fci_name,fci)
     fci_ds = fci.generate()

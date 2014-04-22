@@ -150,6 +150,7 @@ class FciDatasetGenerator < VctGenerator
     def initialize(vctfake,name,fci)
         super(vctfake,name)
         @fci = fci
+        @line = {}
     end
 
     def point
@@ -171,6 +172,7 @@ class FciDatasetGenerator < VctGenerator
     def line
         sore = 0
         super do |i|
+            @line[i.objectid] = i.size
             b = if (sore == 0) or (sore >= @fci)
                 true
                 sore = 0
@@ -187,6 +189,8 @@ class FciDatasetGenerator < VctGenerator
     def polygon
         sore = 0
         super do |i|
+            point_count = 0
+            i.eachLineId{|i| point_count += @line[i.to_i.abs]}
             b = if (sore == 0) or (sore >= @fci)
                 true
                 sore = 0
@@ -194,7 +198,7 @@ class FciDatasetGenerator < VctGenerator
                 false
             end
 
-            sore += i.size
+            sore += point_count
 
             b
         end
