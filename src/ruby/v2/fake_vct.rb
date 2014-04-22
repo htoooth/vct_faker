@@ -11,21 +11,18 @@ def main(opt)
     efc = opt[:efc]
     fci = opt[:fci]
     linerange = (opt[:min]..opt[:max])
+    efc_name = opt[:target_efc]
+    fci_name = opt[:target_fci]
 
-    puts "::fake_vct -s #{size} -t #{name} -e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}::"
+    puts "::fake_vct -s #{size} -t1 #{efc_name} -t2 #{fci_name}-e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}::"
 
     vct_fake = VctCreator.new(size.to_i,linerange)
 
-    efc_name = "#{name}_efc.VCT"
-    efc_index = "#{name}_efc.INDEX"
-    fci_name = "#{name}_fci.VCT"
-    fci_index = "#{name}_fci.INDEX"
-
-    efc = EfcDatasetGenerator.new(vct_fake,efc_index,efc)
+    efc = EfcDatasetGenerator.new(vct_fake,efc_name,efc)
     efc_ds = efc.generate()
     efc_ds.close
 
-    fci = FciDatasetGenerator.new(vct_fake,fci_index,fci)
+    fci = FciDatasetGenerator.new(vct_fake,fci_name,fci)
     fci_ds = fci.generate()
     fci_ds.close
 end
@@ -34,6 +31,8 @@ options = {:size   => 10,
            :target => 'TEST',
            :efc    => 100,
            :fci    => 100,
+           :target_efc => 'test_efc',
+           :target_fci => 'test_fci',
            :min    => 2,
            :max    => 20 }
 
@@ -41,7 +40,7 @@ opt_parser = OptionParser.new do |opt|
   opt.banner = "Usage: fake_vct OPTIONS"
   opt.separator  ""
   opt.separator  "default:"
-  opt.separator  "fake_vct -s 10 -t TEST -e 100 -f 100 -i 2 -a 20"
+  opt.separator  "fake_vct -s 10 -t1 test_efc -t2 test_fci -e 100 -f 100 -i 2 -a 20"
   opt.separator  ""
   opt.separator  "Options"
 
@@ -49,8 +48,12 @@ opt_parser = OptionParser.new do |opt|
     options[:size] = size
   end
 
-  opt.on("-t","--target FILE_NAME","generate file name") do |target|
-    options[:target] = target
+  opt.on('-o',"--t_efc EFC_FILE_NAME","one generate efc file name") do |target|
+    options[:target_efc] = target
+  end
+
+  opt.on('-t',"--t_fci FCI_FILE_NAME","two generate fci file name") do |target|
+    options[:target_fci] = target
   end
 
   opt.on("-e","--efc EFC",Integer,"equal feature count") do |efc|

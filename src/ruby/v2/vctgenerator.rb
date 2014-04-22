@@ -3,9 +3,9 @@ class VctGenerator
         @vct = VctDataset.new(name)
         @vctfake = vctfake
 
-        @point_index = IndexFile.new("#{name}.point")
-        @line_index = IndexFile.new("#{name}.line")
-        @polygon_index = IndexFile.new("#{name}.polygon")
+        @point_index = IndexFile.new("#{name}.point.index")
+        @line_index = IndexFile.new("#{name}.line.index")
+        @polygon_index = IndexFile.new("#{name}.polygon.index")
 
         @feature_count = @vctfake.getCount
 

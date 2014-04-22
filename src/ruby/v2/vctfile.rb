@@ -48,7 +48,7 @@ class VctFile
     def close
         close_featurecode()
         close_table()
-        puts "=========Time::now==========="
+        puts "=========#{Time::now}==========="
     end
 
     def close_point
@@ -116,19 +116,19 @@ end
 
 class HeadPart < VctPart
     def initialize(name)
-        super("z.#{name}head.part",:Head)
+        super("#{name}.head.part",:Head)
     end
 end
 
 class LayerPart < VctPart
     def initialize(name)
-        super("z.#{name}.featureCode.part",:FeatureCode)
+        super("#{name}.featurecode.part",:FeatureCode)
     end
 end
 
 class TablePart < VctPart
     def initialize(name)
-        super("z.#{name}.table.part",:Table)
+        super("#{name}.table.part",:Table)
     end
 
 end
@@ -136,7 +136,7 @@ end
 class PointPart < VctPart
     attr_accessor :attribute
     def initialize(name)
-        super("z.#{name}.point.geometry.part",:Point)
+        super("#{name}.point.geometry.part",:Point)
         @attribute = PointAttribute.new(name)
     end
 
@@ -165,7 +165,7 @@ end
 class LinePart < VctPart
     attr_accessor :attribute
     def initialize(name)
-        super("z.#{name}.line.geometry.part",:Line)
+        super("#{name}.line.geometry.part",:Line)
         @attribute = LineAttribute.new(name)
     end
 
@@ -194,7 +194,7 @@ end
 class PolygonPart < VctPart
     attr_accessor :attribute
     def initialize(name)
-        super("z.#{name}.polygon.geometry.part",:Polygon)
+        super("#{name}.polygon.geometry.part",:Polygon)
         @attribute = PolygonAttribute.new(name)
     end
 
@@ -250,7 +250,7 @@ end
 
 class PointAttribute < AttributePart
     def initialize(name)
-        super("z.#{name}.point.attribute.part")
+        super("#{name}.point.attribute.part")
         write_begin()
     end
 
@@ -262,13 +262,13 @@ end
 
 class LineAttribute < AttributePart
     def initialize(name)
-        super("z.#{name}.line.attribute.part")
+        super("#{name}.line.attribute.part")
     end
 end
 
 class PolygonAttribute < AttributePart
     def initialize(name)
-        super("z.#{name}.polygon.attribute.part")
+        super("#{name}.polygon.attribute.part")
     end
 
     def write_end

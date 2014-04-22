@@ -2,9 +2,7 @@ require 'rake/clean'
 
 CLEAN.include('*.VCT')
 CLEAN.include('*.part')
-CLEAN.include('*.point')
-CLEAN.include('*.line')
-CLEAN.include('*.polygon')
+CLEAN.include('*.index')
 
 def os
     @os ||= (
@@ -24,10 +22,26 @@ def os
     )
 end
 
+def merge_file(name)
+    cat = "cat #{name}.head.part " + 
+              "#{name}.featurecode.part " +  
+              "#{name}.table.part " + 
+              "#{name}.point.geometry.part " + 
+              "#{name}.line.geometry.part " + 
+              "#{name}.polygon.geometry.part " +
+              "#{name}.point.attribute.part " +
+              "#{name}.line.attribute.part " +
+              "#{name}.polygon.attribute.part "
+    sh "#{cat} >> #{name}.VCT"
+end
+
+
 
 desc "test"
 task :test do
-     system 'ruby fake_vct.rb'
+     sh "ruby fake_vct.rb -t t1 -o t2"
+     merge_file(:t1)
+     merge_file(:t2)
 end
 
 task :default => :test
