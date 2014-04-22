@@ -156,11 +156,26 @@ class Layer
         @field = tabledefn
         @field.name = table
         @file = file
+        @buff_feature = []
+        @buff_size = 100
     end
 
     def create_feature(geo,attri)
         feat = VctFeature.new(geo.objectid,geo,attri)
+
+        # buff cache
+        @buff_feature << feat
+        if @buff_feature.size >= @buff_size
+            yield(@buff_feature)
+            @buff_feature.clear
+        end
+
         return feat
+    end
+
+    def close
+        yield(@buff_feature)
+        @file.point.attribute.write_table_end()
     end
 
     def to_s

@@ -24,8 +24,8 @@ end
 
 def merge_file(name)
     cat = "cat #{name}.head.part " + 
-              "#{name}.featurecode.part " +  
-              "#{name}.table.part " + 
+              "#{name}.featurecode.part " + 
+              "#{name}.table.part " +
               "#{name}.point.geometry.part " + 
               "#{name}.line.geometry.part " + 
               "#{name}.polygon.geometry.part " +
@@ -39,7 +39,7 @@ end
 
 desc "test"
 task :test do
-     sh "ruby fake_vct.rb -t t1 -o t2"
+     sh "ruby fake_vct.rb -o t1 -t t2"
      merge_file(:t1)
      merge_file(:t2)
 end

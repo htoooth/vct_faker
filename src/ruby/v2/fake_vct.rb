@@ -14,13 +14,13 @@ def main(opt)
     efc_name = opt[:target_efc]
     fci_name = opt[:target_fci]
 
-    puts "::fake_vct -s #{size} -t1 #{efc_name} -t2 #{fci_name}-e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}::"
+    puts "::fake_vct -s #{size} -o #{efc_name} -t #{fci_name} -e #{efc} -f #{fci} -i #{opt[:min]} -a #{opt[:max]}::"
 
     vct_fake = VctCreator.new(size.to_i,linerange)
 
-    efc = EfcDatasetGenerator.new(vct_fake,efc_name,efc)
-    efc_ds = efc.generate()
-    efc_ds.close
+    # efc = EfcDatasetGenerator.new(vct_fake,efc_name,efc)
+    # efc_ds = efc.generate()
+    # efc_ds.close
 
     fci = FciDatasetGenerator.new(vct_fake,fci_name,fci)
     fci_ds = fci.generate()

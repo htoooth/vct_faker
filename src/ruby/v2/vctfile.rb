@@ -144,6 +144,9 @@ class PointPart < VctPart
     def write_feature(feats)
         buff_geo = ''
         buff_attri = ''
+
+        return 0 if feats.size == 0
+
         feats.each do |i|
             buff_geo += i.geometry.to_s
             buff_attri += i.attribute.to_s
@@ -173,6 +176,9 @@ class LinePart < VctPart
     def write_feature(feats)
         buff_geo = ''
         buff_attri = ''
+
+        return 0 if feats.size == 0
+
         feats.each do |i|
             buff_geo += i.geometry.to_s
             buff_attri += i.attribute.to_s
@@ -202,6 +208,9 @@ class PolygonPart < VctPart
     def write_feature(feats)
         buff_geo = ''
         buff_attri = ''
+
+        return 0 if feats.size == 0
+
         feats.each do |i|
             buff_geo += i.geometry.to_s
             buff_attri += i.attribute.to_s

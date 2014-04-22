@@ -21,35 +21,28 @@ class VctGenerator
 
     def point
         current_layer = nil
-
         @vctfake.each_point do |i|
             if yield(i)
-                @vct.file.point.attribute.write_table_end() if current_layer != nil
+                if current_layer != nil
+                    current_layer.close {|feats| @vct.file.point.write_feature(feats)}
+                end
                 current_layer = @vct.create_layer("Point",@vctfake.table_define.clone)
                 @vct.file.point.attribute.write_table_name(current_layer.table)
             end
-            current_layer = @vct.create_layer("Point",@vctfake.table_define.clone) if yield(i)
             point = FPoint.new(i.objectid,current_layer.id,current_layer.name,i)
             attribute = Attribute.new(i.objectid,current_layer.id,@vctfake.attribute_value)
-            feat = current_layer.create_feature(point,attribute)
-
-            @buff_feature << feat
-            if @buff_feature.size >= @buff_size
-                @vct.file.point.write_feature(@buff_feature)
-                @buff_feature.clear
-            end
+            feat = current_layer.create_feature(point,attribute){|feats| @vct.file.point.write_feature(feats)}
         end
 
         # add last feature if buff_feaure have features
-        @vct.file.point.write_frush(@buff_feature)
-        @buff_feature.clear
-        @vct.file.point.attribute.write_table_end()
+        current_layer.close {|feats| @vct.file.point.write_feature(feats)}
         @vct.file.close_point
     end
 
     def line
         current_layer = nil
-        
+
+        s = 0
         @vctfake.each_line do |i|
             if yield(i)
                 @vct.file.line.attribute.write_table_end() if current_layer != nil
