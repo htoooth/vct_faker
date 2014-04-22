@@ -166,7 +166,7 @@ class Layer
         # buff cache
         @buff_feature << feat
         if @buff_feature.size >= @buff_size
-            yield(@buff_feature)
+            write(@buff_feature)
             @buff_feature.clear
         end
 
@@ -174,12 +174,79 @@ class Layer
     end
 
     def close
-        yield(@buff_feature)
-        @file.point.attribute.write_table_end()
+        write(@buff_feature)
+        write_end()
+    end
+
+    def write(feats)
+    end
+
+    def write_end
+    end
+
+    def write_start
     end
 
     def to_s
         "#{@id},#{@name},#{@type},0,0,0,#{@table}"
+    end
+end
+
+
+class PointLayer < Layer
+    def initialize(id,name,type,table,tabledefn,file)
+        super
+        write_start()
+    end
+
+    def write(feats)
+        @file.point.write_feature(feats)
+    end
+
+    def write_end
+        @file.point.attribute.write_table_end()
+    end
+
+    def write_start
+        @file.point.attribute.write_table_name(@table)
+    end
+end
+
+class LineLayer < Layer
+    def initialize(id,name,type,table,tabledefn,file)
+        super
+        write_start()
+    end
+
+    def write(feats)
+        @file.line.write_feature(feats)
+    end
+
+    def write_end
+        @file.line.attribute.write_table_end()
+    end
+
+    def write_start
+        @file.line.attribute.write_table_name(@table)
+    end
+end
+
+class PolygonLayer < Layer
+    def initialize(id,name,type,table,tabledefn,file)
+        super
+        write_start()
+    end
+
+    def write(feats)
+        @file.polygon.write_feature(feats)
+    end
+
+    def write_end
+        @file.polygon.attribute.write_table_end()
+    end
+
+    def write_start
+        @file.polygon.attribute.write_table_name(@table)
     end
 end
 
@@ -214,12 +281,31 @@ class VctDataset
 
     def create_layer(type,tabledefn)
         @layercode = @layercode +1
-        layer = Layer.new(@prefix[:id] + @layercode.to_s,
-                          @prefix[:name] + @layercode.to_s,
-                          type,
-                          @prefix[:table] + @layercode.to_s,
-                          tabledefn,
-                          @file)
+        layer = nil
+        case type
+        when 'Point'
+            layer = PointLayer.new(@prefix[:id] + @layercode.to_s,
+                                   @prefix[:name] + @layercode.to_s,
+                                   type,
+                                   @prefix[:table] + @layercode.to_s,
+                                   tabledefn,
+                                   @file)
+        when 'Line'
+            layer = LineLayer.new(@prefix[:id] + @layercode.to_s,
+                                  @prefix[:name] + @layercode.to_s,
+                                  type,
+                                  @prefix[:table] + @layercode.to_s,
+                                  tabledefn,
+                                  @file)
+        when 'Polygon'
+            layer = PolygonLayer.new(@prefix[:id] + @layercode.to_s,
+                                     @prefix[:name] + @layercode.to_s,
+                                     type,
+                                     @prefix[:table] + @layercode.to_s,
+                                     tabledefn,
+                                     @file)
+        end
+
         @layers << layer
 
         write_layer(layer)

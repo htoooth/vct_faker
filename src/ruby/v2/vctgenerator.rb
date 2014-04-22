@@ -24,47 +24,38 @@ class VctGenerator
         @vctfake.each_point do |i|
             if yield(i)
                 if current_layer != nil
-                    current_layer.close {|feats| @vct.file.point.write_feature(feats)}
+                    current_layer.close()
                 end
                 current_layer = @vct.create_layer("Point",@vctfake.table_define.clone)
-                @vct.file.point.attribute.write_table_name(current_layer.table)
             end
             point = FPoint.new(i.objectid,current_layer.id,current_layer.name,i)
             attribute = Attribute.new(i.objectid,current_layer.id,@vctfake.attribute_value)
-            feat = current_layer.create_feature(point,attribute){|feats| @vct.file.point.write_feature(feats)}
+            feat = current_layer.create_feature(point,attribute)
         end
 
         # add last feature if buff_feaure have features
-        current_layer.close {|feats| @vct.file.point.write_feature(feats)}
+        current_layer.close()
         @vct.file.close_point
     end
 
     def line
         current_layer = nil
 
-        s = 0
         @vctfake.each_line do |i|
             if yield(i)
-                @vct.file.line.attribute.write_table_end() if current_layer != nil
+                if current_layer != nil
+                    current_layer.close()
+                end
                 current_layer = @vct.create_layer("Line",@vctfake.table_define.clone)
-                @vct.file.line.attribute.write_table_name(current_layer.table)
             end
             line = FLine.new(i.objectid,current_layer.id,current_layer.name,i)
             attribute = Attribute.new(i.objectid,current_layer.id,@vctfake.attribute_value)
             feat = current_layer.create_feature(line,attribute)
 
-            @buff_feature << feat
-            if @buff_feature.size >= @buff_size
-                @vct.file.line.write_feature(@buff_feature)
-                @buff_feature.clear
-            end
-
             @line_index.write "#{i.objectid} #{i.size}"
         end
 
-        @vct.file.line.write_frush(@buff_feature)
-        @buff_feature.clear
-        @vct.file.line.attribute.write_table_end()
+        current_layer.close()
         @vct.file.close_line
         @line_index.close
     end
@@ -74,28 +65,20 @@ class VctGenerator
 
         @vctfake.each_polygon do |i|
             if yield(i)
-                @vct.file.polygon.attribute.write_table_end() if current_layer != nil
+                if current_layer != nil
+                    current_layer.close()
+                end
                 current_layer = @vct.create_layer("Polygon",@vctfake.table_define.clone)
-                @vct.file.polygon.attribute.write_table_name(current_layer.table) 
             end
             polygon = FPolygon.new(i.objectid,current_layer.id,current_layer.name,i)
             attribute = Attribute.new(i.objectid ,current_layer.id,@vctfake.attribute_value)
-            feat = current_layer.create_feature(polygon,attribute)
-
-            @buff_feature << feat
-            if @buff_feature.size >= @buff_size
-                @vct.file.polygon.write_feature(@buff_feature)
-                @buff_feature.clear
-            end
+            feat = current_layer.create_feature(polygon,attribute){|feats| @vct.file.polygon.write_feature(feats)}
 
             @polygon_index.write "#{i.objectid} #{i.to_s}"
-
         end
 
-        @vct.file.polygon.write_frush(@buff_feature)
-        @buff_feature.clear
-        @vct.file.polygon.attribute.write_table_end()
-        @vct.file.close_polygon
+        current_layer.close()
+        @vct.file.close_polygon()
         @polygon_index.close
     end
 
