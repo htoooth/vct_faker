@@ -1,3 +1,4 @@
+require 'ssdb'
 class VctGenerator
     def initialize(vctfake,name)
         @vct = VctDataset.new(name)
@@ -150,7 +151,7 @@ class FciDatasetGenerator < VctGenerator
     def initialize(vctfake,name,fci)
         super(vctfake,name)
         @fci = fci
-        @line = {}
+        @ssdb = SSDB.new
     end
 
     def point
@@ -172,7 +173,7 @@ class FciDatasetGenerator < VctGenerator
     def line
         sore = 0
         super do |i|
-            @line[i.objectid] = i.size
+            @ssdb.set i.objectid ,i.size
             b = if (sore == 0) or (sore >= @fci)
                 sore = 0
                 true
@@ -190,7 +191,7 @@ class FciDatasetGenerator < VctGenerator
         sore = 0
         super do |i|
             point_count = 0
-            i.eachLineId{|i| point_count += @line[i.to_i.abs]}
+            i.eachLineId{|i| point_count += @ssdb.get(i.to_i.abs).to_i}
             i.size = point_count
             b = if (sore == 0) or (sore >= @fci)
                 sore = 0
