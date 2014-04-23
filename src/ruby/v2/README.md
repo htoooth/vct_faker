@@ -17,6 +17,11 @@ This tool are faster than v1 and least memery than v1.
 
 ```
 
+# Require
+
+[ssdb](https://github.com/ideawu/ssdb)
+`gem ssdb`
+
 # About 
 
 Thasks to Shui.
