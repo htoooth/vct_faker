@@ -37,18 +37,25 @@ end
 
 
 
-desc "test"
+desc "run ruby fake_vct.rb -o t1 -t t2"
 task :test do
-     sh "ruby fake_vct.rb -o t1 -t t2"
-     merge_file(:t1)
-     merge_file(:t2)
+    sh "ruby fake_vct.rb -o t1 -t t2"
+    merge_file(:t1)
+    merge_file(:t2)
 end
 
-desc "test 2000"
+desc "run ruby fake_vct.rb -s 2000 -o t1 -t t2 -e 500000 -f 50000000  -i 20 -a 200"
 task :t2000 do
-     sh "ruby fake_vct.rb -s 2000 -o t1 -t t2 -e 500000 -f 50000000  -i 20 -a 200"
-     merge_file(:t1)
-     merge_file(:t2)
+    sh "ruby fake_vct.rb -s 2000 -o t1 -t t2 -e 500000 -f 50000000  -i 20 -a 200"
+    merge_file(:t1)
+    merge_file(:t2)
+end
+
+desc "run ruby fake_vct.rb -s 1000 -o t1 -t t2 -e 250000 -f 25000000 -i 20 -a 100"
+task "t1000" do
+    sh 'ruby fake_vct.rb -s 1000 -o t1 -t t2 -e 250000 -f 25000000 -i 20 -a 100'
+    merge_file(:t1)
+    merge_file(:t2)
 end
 
 task :default => :test
